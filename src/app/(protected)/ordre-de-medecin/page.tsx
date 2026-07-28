@@ -1,5 +1,6 @@
 import { actorAreas } from "@/config/actors";
 import { requireActorAccess } from "@/core/auth/guards";
+import { DashboardHome } from "@/shared/components/layout/dashboard-home";
 import { ProtectedShell } from "@/shared/components/layout/protected-shell";
 
 const actor = actorAreas.find((item) => item.key === "ordre-de-medecin")!;
@@ -9,8 +10,13 @@ export default async function MedicalOrderDashboardPage() {
 
   return (
     <ProtectedShell actor={actor} user={user}>
-      <p className="text-sm text-slate-500">ConnectÃ© : {user.displayName}</p>
-      <p className="mt-4">Tableau de bord Ordre des mÃ©decins : supervision, conformitÃ©, validations et rapports professionnels.</p>
+      <DashboardHome
+        actor={actor}
+        user={user}
+        title="Accueil Ordre des médecins"
+        description="Point d'entrée pour la supervision professionnelle, la conformité, les validations et les rapports institutionnels."
+        actions={["Superviser les institutions", "Consulter les rapports", "Suivre la conformité"]}
+      />
     </ProtectedShell>
   );
 }

@@ -1,25 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
-import { protectedActorPaths } from "@/config/actors";
-import { authCookieName } from "@/core/auth/session-cookies";
+import { NextResponse } from "next/server";
 
-export function middleware(request: NextRequest) {
-  const pathname = request.nextUrl.pathname;
-  const isProtectedArea = protectedActorPaths.some((path) => pathname === path || pathname.startsWith(`${path}/`));
-
-  if (!isProtectedArea) {
-    return NextResponse.next();
-  }
-
-  const hasSession = request.cookies.has(authCookieName);
-
-  if (hasSession) {
-    return NextResponse.next();
-  }
-
-  const loginUrl = new URL("/auth/login", request.url);
-  loginUrl.searchParams.set("redirect", pathname);
-
-  return NextResponse.redirect(loginUrl);
+// Contrôle d'accès temporairement neutralisé pendant la construction des interfaces mock.
+// IMPORTANT : restaurer la validation de session avant toute connexion à l'API ou mise en production.
+export function middleware() {
+  return NextResponse.next();
 }
 
 export const config = {
