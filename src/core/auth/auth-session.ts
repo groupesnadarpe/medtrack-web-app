@@ -2,7 +2,7 @@ import { cookies } from "next/headers";
 import { authCookieName, refreshCookieName } from "@/core/auth/session-cookies";
 import { defaultPathForRoles } from "@/core/auth/role-access";
 import type { AuthUser } from "@/features/auth/domain/auth-user";
-import { getCurrentUser } from "@/features/auth/infrastructure/auth-api";
+import { getCurrentUser } from "@/features/auth/infrastructure/auth-gateway";
 
 export { authCookieName, refreshCookieName };
 

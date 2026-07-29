@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getServerAuthSession } from "@/core/auth/auth-session";
 import { authCookieName, refreshCookieName } from "@/core/auth/session-cookies";
-import { logoutFromApi } from "@/features/auth/infrastructure/auth-api";
+import { logoutFromApi } from "@/features/auth/infrastructure/auth-gateway";
 
 export async function POST() {
   const session = await getServerAuthSession();

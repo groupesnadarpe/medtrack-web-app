@@ -1,71 +1,232 @@
 "use client";
 
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { FormEvent, useState } from "react";
-import { actorAreas, type ActorArea } from "@/config/actors";
+import { AlertCircle, Check, Eye, EyeOff, KeyRound, Loader2, Mail } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { type FormEvent, useId, useState } from "react";
+import { env } from "@/config/env";
+import { DemoAccounts } from "@/features/auth/ui/demo-accounts";
+import { createFormValidator, firstFormFieldError, minLength, required } from "@/shared/forms";
+import type { FormFieldErrors } from "@/shared/forms";
+import { cn } from "@/shared/ui/utils";
+
+type LoginValues = {
+  login: string;
+  password: string;
+};
+
+// Validation front-end « best effort » : l'API reste la source de vérité des règles métier.
+const validateLogin = createFormValidator<LoginValues>([
+  { field: "login", validate: required("Renseignez votre email, téléphone ou matricule.") },
+  { field: "password", validate: required("Renseignez votre mot de passe.") },
+  { field: "password", validate: minLength(8, "Le mot de passe contient au moins 8 caractères.") },
+]);
+
+const fieldClassName =
+  "w-full rounded-full border border-input bg-background py-3.5 pl-12 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-ring/30";
 
 export function LoginForm() {
   const router = useRouter();
-  const [isModalOpen, setModalOpen] = useState(false);
+  const searchParams = useSearchParams();
+  const loginFieldId = useId();
+  const passwordFieldId = useId();
 
-  // En mode maquette, aucun identifiant n'est transmis à une API.
-  // Le formulaire ouvre seulement le sélecteur des espaces à prévisualiser.
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setModalOpen(true);
+  const [values, setValues] = useState<LoginValues>({ login: "", password: "" });
+  const [fieldErrors, setFieldErrors] = useState<FormFieldErrors<LoginValues>>({});
+  const [formError, setFormError] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+
+  const loginError = firstFormFieldError(fieldErrors, "login");
+  const passwordError = firstFormFieldError(fieldErrors, "password");
+
+  function updateValue(field: keyof LoginValues, value: string) {
+    setValues((current) => ({ ...current, [field]: value }));
+    setFieldErrors((current) => ({ ...current, [field]: undefined }));
+    setFormError(null);
   }
 
-  function openActorArea(actor: ActorArea) {
-    setModalOpen(false);
-    router.push(actor.path);
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    const validation = validateLogin(values);
+
+    if (!validation.isValid) {
+      setFieldErrors(validation.errors);
+
+      return;
+    }
+
+    setFieldErrors({});
+    setFormError(null);
+    setSubmitting(true);
+
+    try {
+      const redirect = searchParams.get("redirect");
+      const endpoint = redirect ? `/api/auth/login?redirect=${encodeURIComponent(redirect)}` : "/api/auth/login";
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: { Accept: "application/json", "Content-Type": "application/json" },
+        body: JSON.stringify({
+          login: values.login.trim(),
+          password: values.password,
+          remember_me: rememberMe,
+        }),
+      });
+
+      const payload = await response.json().catch(() => null);
+
+      if (!response.ok) {
+        // Erreurs de validation Laravel : on les replace sur les champs concernés.
+        if (payload?.errors) {
+          setFieldErrors(payload.errors as FormFieldErrors<LoginValues>);
+        }
+
+        setFormError(payload?.detail ?? payload?.title ?? "Identifiants invalides.");
+        setSubmitting(false);
+
+        return;
+      }
+
+      // La redirection est décidée côté serveur à partir des rôles renvoyés par l'API.
+      router.replace(payload?.data?.redirect_to ?? "/");
+      router.refresh();
+    } catch {
+      setFormError("Connexion impossible. Vérifiez votre réseau puis réessayez.");
+      setSubmitting(false);
+    }
   }
 
   return (
-    <>
-      <form onSubmit={handleSubmit} className="space-y-3.5">
-        <label className="block">
-          <span className="text-sm font-bold text-slate-700">Identifiant</span>
-          <span className="mt-1.5 flex h-12 items-center gap-3 rounded-lg border border-slate-200 bg-white px-4 shadow-sm focus-within:border-[#08bfae] focus-within:ring-4 focus-within:ring-teal-50">
-            <span aria-hidden="true" className="w-5 text-center text-slate-400">✉</span>
-            <input name="login" className="w-full bg-transparent text-[0.95rem] text-slate-900 outline-none placeholder:text-slate-400" placeholder="Email, téléphone ou matricule" autoComplete="username" />
-          </span>
-        </label>
+    <div className="w-full max-w-md rounded-3xl border border-border/70 bg-card p-8 shadow-[0_24px_60px_-40px_rgba(22,38,74,0.35)] sm:p-10">
+      <header className="flex flex-col gap-2">
+        <h2 className="font-display text-3xl font-extrabold tracking-tight text-foreground">Connexion</h2>
+        <p className="text-sm leading-relaxed text-muted-foreground text-pretty">
+          Accédez à votre espace de travail : vous êtes redirigé automatiquement selon votre rôle.
+        </p>
+      </header>
 
-        <label className="block">
-          <span className="text-sm font-bold text-slate-700">Mot de passe</span>
-          <span className="mt-1.5 flex h-12 items-center gap-3 rounded-lg border border-slate-200 bg-white px-4 shadow-sm focus-within:border-[#08bfae] focus-within:ring-4 focus-within:ring-teal-50">
-            <span aria-hidden="true" className="w-5 text-center text-slate-400">●</span>
-            <input name="password" type="password" className="w-full bg-transparent text-[0.95rem] text-slate-900 outline-none placeholder:text-slate-400" placeholder="••••••••••••" autoComplete="current-password" />
-          </span>
-        </label>
-
-        <div className="flex items-center justify-between gap-4 text-sm">
-          <label className="flex items-center gap-2.5 font-medium text-slate-500"><input name="remember" type="checkbox" className="h-4 w-4 rounded border-slate-300 accent-[#08bfae]" />Se souvenir de moi</label>
-          <Link href="/auth/forgot-password" className="font-bold text-[#08a99a] hover:text-[#08bfae]">Mot de passe oublié ?</Link>
+      <form onSubmit={handleSubmit} className="mt-8 flex flex-col gap-5" noValidate>
+        <div className="flex flex-col gap-2">
+          <label htmlFor={loginFieldId} className="text-sm font-semibold text-foreground">
+            Email, téléphone ou matricule
+          </label>
+          <div className="relative">
+            <Mail
+              className="pointer-events-none absolute top-1/2 left-4 size-5 -translate-y-1/2 text-muted-foreground"
+              aria-hidden="true"
+            />
+            <input
+              id={loginFieldId}
+              name="login"
+              type="text"
+              inputMode="email"
+              autoComplete="username"
+              placeholder="admin.stages@medtrack.cd"
+              value={values.login}
+              onChange={(event) => updateValue("login", event.target.value)}
+              aria-invalid={Boolean(loginError)}
+              aria-describedby={loginError ? `${loginFieldId}-error` : undefined}
+              className={cn(fieldClassName, "pr-4", loginError && "border-destructive focus:border-destructive")}
+            />
+          </div>
+          {loginError ? (
+            <p id={`${loginFieldId}-error`} role="alert" className="text-xs font-medium text-destructive">
+              {loginError}
+            </p>
+          ) : null}
         </div>
 
-        <button type="submit" className="mt-1 h-12 w-full rounded-lg bg-[#08bfae] px-5 text-[0.95rem] font-extrabold text-white shadow-[0_10px_20px_rgba(8,191,174,0.2)] transition hover:bg-[#06ad9d]">Se connecter</button>
-        <p className="text-center text-sm text-slate-500">Pas encore de compte ? <Link href="/auth/register" className="font-extrabold text-[#08a99a] hover:text-[#08bfae]">Créer un compte</Link></p>
+        <div className="flex flex-col gap-2">
+          <label htmlFor={passwordFieldId} className="text-sm font-semibold text-foreground">
+            Mot de passe
+          </label>
+          <div className="relative">
+            <KeyRound
+              className="pointer-events-none absolute top-1/2 left-4 size-5 -translate-y-1/2 text-muted-foreground"
+              aria-hidden="true"
+            />
+            <input
+              id={passwordFieldId}
+              name="password"
+              type={showPassword ? "text" : "password"}
+              autoComplete="current-password"
+              placeholder="••••••••••"
+              value={values.password}
+              onChange={(event) => updateValue("password", event.target.value)}
+              aria-invalid={Boolean(passwordError)}
+              aria-describedby={passwordError ? `${passwordFieldId}-error` : undefined}
+              className={cn(fieldClassName, "pr-12", passwordError && "border-destructive focus:border-destructive")}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((value) => !value)}
+              className="absolute top-1/2 right-3 flex size-8 -translate-y-1/2 items-center justify-center rounded-full text-muted-foreground transition hover:bg-muted hover:text-foreground"
+            >
+              {showPassword ? <EyeOff className="size-5" /> : <Eye className="size-5" />}
+              <span className="sr-only">
+                {showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+              </span>
+            </button>
+          </div>
+          {passwordError ? (
+            <p id={`${passwordFieldId}-error`} role="alert" className="text-xs font-medium text-destructive">
+              {passwordError}
+            </p>
+          ) : null}
+        </div>
+
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <button
+            type="button"
+            role="checkbox"
+            aria-checked={rememberMe}
+            onClick={() => setRememberMe((value) => !value)}
+            className="group flex items-center gap-2.5 text-sm text-foreground"
+          >
+            <span
+              aria-hidden="true"
+              className={cn(
+                "flex size-5 items-center justify-center rounded-md border transition",
+                rememberMe
+                  ? "border-primary bg-primary text-primary-foreground"
+                  : "border-input bg-background text-transparent group-hover:border-primary/60",
+              )}
+            >
+              <Check className="size-3.5" strokeWidth={3} />
+            </span>
+            Se souvenir de moi
+          </button>
+          <a
+            href="/auth/password/forgot"
+            className="text-sm font-semibold text-primary-strong transition hover:underline"
+          >
+            Mot de passe oublié ?
+          </a>
+        </div>
+
+        {formError ? (
+          <p
+            role="alert"
+            aria-live="polite"
+            className="flex items-start gap-2 rounded-2xl bg-destructive-soft px-4 py-3 text-sm font-medium text-destructive"
+          >
+            <AlertCircle className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
+            {formError}
+          </p>
+        ) : null}
+
+        <button
+          type="submit"
+          disabled={submitting}
+          className="mt-1 inline-flex h-14 w-full items-center justify-center gap-2 rounded-full bg-primary text-base font-semibold text-primary-foreground transition hover:bg-primary-strong focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70"
+        >
+          {submitting ? <Loader2 className="size-5 animate-spin" aria-hidden="true" /> : null}
+          {submitting ? "Connexion en cours..." : "Connexion à mon espace"}
+        </button>
       </form>
 
-      {isModalOpen ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/55 p-4 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="workspace-title" onMouseDown={() => setModalOpen(false)}>
-          <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white p-6 shadow-2xl" onMouseDown={(event) => event.stopPropagation()}>
-            <div className="flex items-start justify-between gap-4">
-              <div><h2 id="workspace-title" className="text-xl font-black text-[#1d3156]">Choisir un espace</h2><p className="mt-1 text-sm text-slate-500">Sélectionnez l'acteur dont vous souhaitez prévisualiser les interfaces.</p></div>
-              <button type="button" onClick={() => setModalOpen(false)} className="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-100 text-xl text-slate-500 hover:bg-slate-200" aria-label="Fermer la fenêtre">×</button>
-            </div>
-            <div className="mt-5 grid gap-3 sm:grid-cols-2">
-              {actorAreas.map((actor) => (
-                <button key={actor.key} type="button" onClick={() => openActorArea(actor)} className="rounded-xl border border-slate-200 p-4 text-left transition hover:border-[#08bfae] hover:bg-teal-50">
-                  <span className="block font-extrabold text-[#1d3156]">{actor.label}</span><span className="mt-1 block text-sm leading-5 text-slate-500">{actor.description}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-      ) : null}
-    </>
+      {env.useMocks ? <DemoAccounts onSelect={(login, password) => setValues({ login, password })} /> : null}
+    </div>
   );
 }

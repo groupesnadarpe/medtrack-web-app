@@ -3,7 +3,7 @@ import { ApiError } from "@/core/api/api-error";
 import { authCookieName, refreshCookieName, sessionCookieOptions } from "@/core/auth/session-cookies";
 import { defaultPathForRoles } from "@/core/auth/role-access";
 import { safeRedirectPath } from "@/core/auth/redirects";
-import { loginWithPassword } from "@/features/auth/infrastructure/auth-api";
+import { loginWithPassword } from "@/features/auth/infrastructure/auth-gateway";
 
 export async function POST(request: NextRequest) {
   try {

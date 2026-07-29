@@ -1,9 +1,54 @@
 @import "tailwindcss";
 
+/*
+  Design tokens Medtrack-RDC.
+  Palette volontairement réduite : navy institutionnel + teal de marque + neutres.
+  Toute couleur utilisée dans l'application doit passer par ces tokens.
+*/
+@theme inline {
+  --font-sans: "Inter", "Inter Fallback", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Plus Jakarta Sans", "Plus Jakarta Sans Fallback", var(--font-sans);
+
+  --color-background: #ffffff;
+  --color-foreground: #16264a;
+
+  --color-card: #fcfdfe;
+  --color-card-foreground: #16264a;
+
+  --color-muted: #f1f5f9;
+  --color-muted-foreground: #64748b;
+
+  --color-border: #e2e8f0;
+  --color-input: #e2e8f0;
+  --color-ring: #0fbfa3;
+
+  /* Navy institutionnel : panneau de marque, textes forts, surfaces sombres. */
+  --color-navy: #16264a;
+  --color-navy-strong: #101c38;
+  --color-navy-soft: #1e3562;
+  --color-navy-foreground: #ffffff;
+
+  /* Teal de marque : action principale, accents, états actifs. */
+  --color-primary: #0fbfa3;
+  --color-primary-strong: #0da892;
+  --color-primary-soft: #e6faf6;
+  --color-primary-foreground: #ffffff;
+
+  --color-destructive: #dc2626;
+  --color-destructive-foreground: #ffffff;
+  --color-destructive-soft: #fef2f2;
+
+  --color-success: #16a34a;
+  --color-warning: #d97706;
+
+  --radius: 0.75rem;
+}
+
 :root {
   color-scheme: light;
 }
 
 body {
   margin: 0;
+  -webkit-font-smoothing: antialiased;
 }
