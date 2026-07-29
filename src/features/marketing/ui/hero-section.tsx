@@ -32,6 +32,16 @@ export function HeroSection() {
               Découvrir la plateforme
             </a>
           </div>
+
+          <p className="text-sm text-slate-300">
+            Vous représentez un hôpital, une clinique ou une université ?{" "}
+            <Link
+              href={routes.institutionRegister}
+              className="font-semibold text-primary underline-offset-4 transition hover:underline"
+            >
+              Demander un compte institutionnel
+            </Link>
+          </p>
         </div>
 
         <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl">

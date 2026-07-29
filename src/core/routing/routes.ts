@@ -5,6 +5,7 @@ export const routes = {
   home: "/",
   login: "/login",
   register: "/register",
+  institutionRegister: "/institution-register",
   forgotPassword: "/forgot-password",
   legal: "/mentions-legales",
   actors: actorAreas,
