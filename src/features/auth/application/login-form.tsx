@@ -1,9 +1,11 @@
 "use client";
 
 import { AlertCircle, Check, Eye, EyeOff, KeyRound, Loader2, Mail } from "lucide-react";
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { type FormEvent, useId, useState } from "react";
 import { env } from "@/config/env";
+import { routes } from "@/core/routing/routes";
 import { DemoAccounts } from "@/features/auth/ui/demo-accounts";
 import { createFormValidator, firstFormFieldError, minLength, required } from "@/shared/forms";
 import type { FormFieldErrors } from "@/shared/forms";
@@ -46,7 +48,7 @@ export function LoginForm() {
     setFormError(null);
   }
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     const validation = validateLogin(values);
@@ -61,40 +63,10 @@ export function LoginForm() {
     setFormError(null);
     setSubmitting(true);
 
-    try {
-      const redirect = searchParams.get("redirect");
-      const endpoint = redirect ? `/api/auth/login?redirect=${encodeURIComponent(redirect)}` : "/api/auth/login";
-      const response = await fetch(endpoint, {
-        method: "POST",
-        headers: { Accept: "application/json", "Content-Type": "application/json" },
-        body: JSON.stringify({
-          login: values.login.trim(),
-          password: values.password,
-          remember_me: rememberMe,
-        }),
-      });
-
-      const payload = await response.json().catch(() => null);
-
-      if (!response.ok) {
-        // Erreurs de validation Laravel : on les replace sur les champs concernés.
-        if (payload?.errors) {
-          setFieldErrors(payload.errors as FormFieldErrors<LoginValues>);
-        }
-
-        setFormError(payload?.detail ?? payload?.title ?? "Identifiants invalides.");
-        setSubmitting(false);
-
-        return;
-      }
-
-      // La redirection est décidée côté serveur à partir des rôles renvoyés par l'API.
-      router.replace(payload?.data?.redirect_to ?? "/");
-      router.refresh();
-    } catch {
-      setFormError("Connexion impossible. Vérifiez votre réseau puis réessayez.");
-      setSubmitting(false);
-    }
+    // TODO(api) : appel à `/api/auth/login` volontairement neutralisé pendant la phase UI.
+    // La redirection définitive sera décidée côté serveur à partir des rôles renvoyés par l'API.
+    const redirect = searchParams.get("redirect");
+    router.push(redirect ?? routes.home);
   }
 
   return (
@@ -197,12 +169,12 @@ export function LoginForm() {
             </span>
             Se souvenir de moi
           </button>
-          <a
-            href="/auth/password/forgot"
+          <Link
+            href={routes.forgotPassword}
             className="text-sm font-semibold text-primary-strong transition hover:underline"
           >
             Mot de passe oublié ?
-          </a>
+          </Link>
         </div>
 
         {formError ? (
@@ -225,6 +197,13 @@ export function LoginForm() {
           {submitting ? "Connexion en cours..." : "Connexion à mon espace"}
         </button>
       </form>
+
+      <p className="mt-6 text-center text-sm text-muted-foreground">
+        Pas encore de compte ?{" "}
+        <Link href={routes.register} className="font-semibold text-primary-strong transition hover:underline">
+          Créer un espace
+        </Link>
+      </p>
 
       {env.useMocks ? <DemoAccounts onSelect={(login, password) => setValues({ login, password })} /> : null}
     </div>

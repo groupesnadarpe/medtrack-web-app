@@ -3,12 +3,15 @@ import { actorAreas, type ActorKey } from "@/config/actors";
 import { getCurrentSession } from "@/core/auth/auth-session";
 import { canAccessActor } from "@/core/auth/role-access";
 import { safeRedirectPath } from "@/core/auth/redirects";
+import { routes } from "@/core/routing/routes";
 
 export async function requireAuth(redirectTo?: string) {
   const session = await getCurrentSession();
 
   if (!session) {
-    const loginPath = redirectTo ? `/auth/login?redirect=${encodeURIComponent(safeRedirectPath(redirectTo))}` : "/auth/login";
+    const loginPath = redirectTo
+      ? `${routes.login}?redirect=${encodeURIComponent(safeRedirectPath(redirectTo))}`
+      : routes.login;
     redirect(loginPath);
   }
 
@@ -22,5 +25,5 @@ export async function requireActorAccess(actor: ActorKey) {
     return context;
   }
 
-  redirect(context.defaultPath ?? "/auth/login");
+  redirect(context.defaultPath ?? routes.login);
 }

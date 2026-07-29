@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { routes } from "@/core/routing/routes";
 
 export function LogoutButton() {
   const router = useRouter();
@@ -15,7 +16,7 @@ export function LogoutButton() {
       headers: { Accept: "application/json" },
     }).catch(() => null);
 
-    router.replace("/auth/login");
+    router.replace(routes.login);
     router.refresh();
   }
 
