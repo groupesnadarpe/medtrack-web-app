@@ -4,7 +4,7 @@ import { RegisterForm } from "@/features/auth/application/register-form";
 export const metadata: Metadata = {
   title: "Créer un espace",
   description:
-    "Déposez une demande de compte institutionnel MEDTRACK-RDC pour votre hôpital, clinique, université ou faculté.",
+    "Déposez votre demande d'inscription MEDTRACK-RDC : vérifiez votre éligibilité auprès de votre université puis créez votre compte étudiant.",
 };
 
 export default function RegisterPage() {

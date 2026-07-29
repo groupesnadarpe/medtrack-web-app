@@ -1,33 +1,9 @@
-/** Types partagés par le tunnel d'inscription (UI uniquement pour l'instant). */
+/** Types partagés par le tunnel d'inscription étudiant (UI uniquement pour l'instant). */
 
-export type InstitutionType = "hospital" | "university";
-
-export type InstitutionTypeOption = {
-  value: InstitutionType;
-  label: string;
-  description: string;
-};
-
-export const institutionTypeOptions: InstitutionTypeOption[] = [
-  {
-    value: "hospital",
-    label: "Hôpital / Clinique",
-    description: "Centre hospitalier, clinique ou établissement de santé",
-  },
-  {
-    value: "university",
-    label: "Université / Faculté",
-    description: "Université, faculté de médecine ou institut de formation",
-  },
-];
-
-export type InstitutionIdentityValues = {
-  name: string;
-  officialId: string;
-  email: string;
-  phone: string;
-  province: string;
-  responsibleName: string;
+export type StudentEligibilityValues = {
+  matricule: string;
+  university: string;
+  academicYear: string;
 };
 
 export type CredentialsValues = {
@@ -47,31 +23,23 @@ export const passwordRules = [
   },
 ] as const;
 
-export const congoProvinces = [
-  "Kinshasa",
-  "Kongo-Central",
-  "Kwango",
-  "Kwilu",
-  "Mai-Ndombe",
-  "Kasaï",
-  "Kasaï-Central",
-  "Kasaï-Oriental",
-  "Lomami",
-  "Sankuru",
-  "Maniema",
-  "Sud-Kivu",
-  "Nord-Kivu",
-  "Ituri",
-  "Haut-Uele",
-  "Tshopo",
-  "Bas-Uele",
-  "Nord-Ubangi",
-  "Mongala",
-  "Sud-Ubangi",
-  "Équateur",
-  "Tshuapa",
-  "Tanganyika",
-  "Haut-Lomami",
-  "Lualaba",
-  "Haut-Katanga",
+/** Universités partenaires proposées à l'étape d'éligibilité (données de démonstration). */
+export const universities = [
+  "Université de Kinshasa (UNIKIN)",
+  "Université de Lubumbashi (UNILU)",
+  "Université de Kisangani (UNIKIS)",
+  "Université Protestante au Congo (UPC)",
+  "Université Catholique du Congo (UCC)",
+  "Université Pédagogique Nationale (UPN)",
+  "Université de Goma (UNIGOM)",
+  "Université Officielle de Bukavu (UOB)",
+  "Université Kongo (UK)",
+  "Université de Mbuji-Mayi (UM)",
+  "Université Simon Kimbangu (USK)",
+  "Université de Bandundu (UNIBAND)",
 ] as const;
+
+/** Années académiques ouvertes aux demandes d'inscription. */
+export const academicYears = ["2024-2025", "2025-2026", "2026-2027"] as const;
+
+export const defaultAcademicYear = "2026-2027";

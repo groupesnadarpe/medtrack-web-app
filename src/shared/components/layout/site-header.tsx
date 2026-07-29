@@ -14,7 +14,7 @@ const navigation = [
 export function SiteHeader() {
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-6 px-6">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
         <Link href={routes.home} className="flex items-center gap-2.5">
           <span
             aria-hidden="true"
@@ -23,16 +23,16 @@ export function SiteHeader() {
             <HeartPulse className="size-5" strokeWidth={2.25} />
           </span>
           <span className="flex flex-col leading-none">
-            <span className="font-display text-base font-extrabold tracking-tight text-navy">
+            <span className="font-display text-base font-extrabold tracking-tight whitespace-nowrap text-navy">
               MEDTRACK<span className="text-primary">-RDC</span>
             </span>
-            <span className="text-[0.5rem] font-semibold tracking-[0.14em] text-muted-foreground uppercase">
+            <span className="text-[0.5rem] font-semibold tracking-[0.14em] whitespace-nowrap text-muted-foreground uppercase">
               Ministère de la Santé Publique
             </span>
           </span>
         </Link>
 
-        <nav aria-label="Navigation principale" className="hidden items-center gap-7 lg:flex">
+        <nav aria-label="Navigation principale" className="hidden items-center gap-4 lg:flex xl:gap-7">
           {navigation.map((item) => (
             <a
               key={item.href}
@@ -44,16 +44,16 @@ export function SiteHeader() {
           ))}
         </nav>
 
-        <div className="flex items-center gap-3">
+        <div className="flex shrink-0 items-center gap-2 xl:gap-3">
           <Link
             href={routes.login}
-            className="inline-flex h-9 items-center justify-center rounded-md border border-primary px-4 text-sm font-semibold text-primary-strong transition hover:bg-primary-soft"
+            className="inline-flex h-9 items-center justify-center rounded-md border border-primary px-4 text-sm font-semibold whitespace-nowrap text-primary-strong transition hover:bg-primary-soft"
           >
             Se connecter
           </Link>
           <Link
             href={routes.register}
-            className="inline-flex h-9 items-center justify-center rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground transition hover:bg-primary-strong"
+            className="inline-flex h-9 items-center justify-center rounded-md bg-primary px-4 text-sm font-semibold whitespace-nowrap text-primary-foreground transition hover:bg-primary-strong"
           >
             Créer un espace
           </Link>
