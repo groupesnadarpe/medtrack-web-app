@@ -9,8 +9,23 @@ export async function POST(request: NextRequest) {
   try {
     const credentials = await request.json();
     const result = await loginWithPassword(credentials);
+    const defaultPath = defaultPathForRoles(result.user.roles);
+
+    if (!defaultPath) {
+      return NextResponse.json(
+        {
+          type: "https://medtrack.cd/problems/frontend-role-space",
+          title: "Aucun espace utilisateur disponible",
+          status: 403,
+          code: "FRONTEND_ROLE_SPACE_UNAVAILABLE",
+          detail: "Le compte est authentifié mais ne possède aucun rôle donnant accès à un espace Medtrack.",
+        },
+        { status: 403 },
+      );
+    }
+
     const requestedRedirect = request.nextUrl.searchParams.get("redirect");
-    const redirectTo = safeRedirectPath(requestedRedirect, defaultPathForRoles(result.user.roles) ?? "/");
+    const redirectTo = safeRedirectPath(requestedRedirect, defaultPath);
     const response = NextResponse.json({ data: { user: result.user, redirect_to: redirectTo } });
 
     // Cookies HttpOnly : le navigateur garde la session, mais le JS client ne lit jamais le JWT.

@@ -12,6 +12,7 @@ import {
   UserRound,
 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { type FormEvent, type ReactNode, useId, useState } from "react";
 import { routes } from "@/core/routing/routes";
 import {
@@ -45,6 +46,7 @@ const validateCredentials = createFormValidator<CredentialsValues>([
 ]);
 
 export function RegisterForm() {
+  const router = useRouter();
   const [step, setStep] = useState<Step>(1);
 
   const [eligibility, setEligibility] = useState<StudentEligibilityValues>({
@@ -56,8 +58,10 @@ export function RegisterForm() {
 
   const [credentials, setCredentials] = useState<CredentialsValues>({ password: "", passwordConfirmation: "" });
   const [credentialsErrors, setCredentialsErrors] = useState<FormFieldErrors<CredentialsValues>>({});
+  const [registrationClaimToken, setRegistrationClaimToken] = useState<string | null>(null);
+  const [formError, setFormError] = useState<string | null>(null);
 
-  function handleEligibilitySubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleEligibilitySubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     const validation = validateEligibility(eligibility);
@@ -69,11 +73,33 @@ export function RegisterForm() {
     }
 
     setEligibilityErrors({});
-    // TODO(api) : vérification d'éligibilité auprès de l'API à brancher plus tard.
-    setStep(2);
+    setFormError(null);
+
+    try {
+      const response = await fetch("/api/auth/student-registration-claim", {
+        method: "POST",
+        headers: { Accept: "application/json", "Content-Type": "application/json" },
+        body: JSON.stringify({
+          student_matricule_number: eligibility.matricule,
+          university_uuid: eligibility.university,
+          academic_year: eligibility.academicYear,
+        }),
+      });
+      const payload = await response.json().catch(() => null);
+
+      if (!response.ok) {
+        setFormError(payload?.detail ?? payload?.message ?? payload?.title ?? "Dossier académique introuvable.");
+        return;
+      }
+
+      setRegistrationClaimToken(payload?.data?.registration_claim_token ?? null);
+      setStep(2);
+    } catch {
+      setFormError("Academic-service est momentanément indisponible.");
+    }
   }
 
-  function handleCredentialsSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleCredentialsSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     const validation = validateCredentials(credentials);
@@ -90,7 +116,36 @@ export function RegisterForm() {
     }
 
     setCredentialsErrors({});
-    // TODO(api) : soumission vers `/api/auth/register` à brancher une fois l'API disponible.
+    setFormError(null);
+
+    if (!registrationClaimToken) {
+      setFormError("La preuve d'éligibilité est absente ou expirée. Recommencez la vérification.");
+      setStep(1);
+      return;
+    }
+
+    try {
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { Accept: "application/json", "Content-Type": "application/json" },
+        body: JSON.stringify({
+          registration_claim_token: registrationClaimToken,
+          password: credentials.password,
+          password_confirmation: credentials.passwordConfirmation,
+        }),
+      });
+      const payload = await response.json().catch(() => null);
+
+      if (!response.ok) {
+        if (payload?.errors) setCredentialsErrors(payload.errors);
+        setFormError(payload?.detail ?? payload?.message ?? payload?.title ?? "Impossible de créer le compte.");
+        return;
+      }
+
+      router.replace(`${routes.login}?registered=1`);
+    } catch {
+      setFormError("Auth-service est momentanément indisponible.");
+    }
   }
 
   return (
@@ -186,8 +241,8 @@ function StepEligibility({
         >
           <option value="">Sélectionnez votre université</option>
           {universities.map((university) => (
-            <option key={university} value={university}>
-              {university}
+            <option key={university.uuid} value={university.uuid}>
+              {university.name}
             </option>
           ))}
         </SelectField>

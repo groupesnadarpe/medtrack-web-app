@@ -25,18 +25,10 @@ export const passwordRules = [
 
 /** Universités partenaires proposées à l'étape d'éligibilité (données de démonstration). */
 export const universities = [
-  "Université de Kinshasa (UNIKIN)",
-  "Université de Lubumbashi (UNILU)",
-  "Université de Kisangani (UNIKIS)",
-  "Université Protestante au Congo (UPC)",
-  "Université Catholique du Congo (UCC)",
-  "Université Pédagogique Nationale (UPN)",
-  "Université de Goma (UNIGOM)",
-  "Université Officielle de Bukavu (UOB)",
-  "Université Kongo (UK)",
-  "Université de Mbuji-Mayi (UM)",
-  "Université Simon Kimbangu (USK)",
-  "Université de Bandundu (UNIBAND)",
+  {
+    uuid: "4c85b08e-54aa-466d-9fa3-d5575f66fedd",
+    name: "Université de Kinshasa (UNIKIN)",
+  },
 ] as const;
 
 /** Années académiques ouvertes aux demandes d'inscription. */

@@ -48,6 +48,7 @@ const validateIdentity = createFormValidator<AdminIdentityValues>([
 ]);
 
 const validateSecurity = createFormValidator<InstitutionSecurityValues>([
+  { field: "institutionUuid", validate: required("Renseignez l'UUID de l'établissement enregistré.") },
   { field: "institutionName", validate: required("Renseignez le nom de votre établissement.") },
   { field: "password", validate: required("Définissez un mot de passe.") },
   { field: "password", validate: minLength(8, "Le mot de passe contient au moins 8 caractères.") },
@@ -63,6 +64,8 @@ const secondaryButtonClassName =
 export function InstitutionRegistrationForm() {
   const [step, setStep] = useState<Step>(1);
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
 
   const [typeValues, setTypeValues] = useState<InstitutionTypeValues>({ institutionType: "" });
   const [typeError, setTypeError] = useState<string | undefined>(undefined);
@@ -115,7 +118,7 @@ export function InstitutionRegistrationForm() {
     setStep(3);
   }
 
-  function handleSecuritySubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSecuritySubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     const validation = validateSecurity(security);
@@ -136,8 +139,49 @@ export function InstitutionRegistrationForm() {
     }
 
     setSecurityErrors({});
-    // TODO(api) : soumission de la demande institutionnelle à brancher une fois l'endpoint disponible.
-    setSubmitted(true);
+    setFormError(null);
+    setSubmitting(true);
+
+    const accountType = typeValues.institutionType === "HOSPITAL" ? "HOSPITAL_ADMIN" : "UNIVERSITY_ADMIN";
+    const institutionReference = typeValues.institutionType === "HOSPITAL"
+      ? { hospital_uuid: security.institutionUuid }
+      : { university_uuid: security.institutionUuid };
+
+    try {
+      const response = await fetch("/api/auth/account-validations", {
+        method: "POST",
+        headers: { Accept: "application/json", "Content-Type": "application/json" },
+        body: JSON.stringify({
+          account_type: accountType,
+          staff_identifier: identity.personalIdentifier,
+          email: identity.email,
+          phone_number: identity.phone,
+          last_name: identity.lastName,
+          middle_name: identity.postName,
+          first_name: identity.firstName,
+          gender: identity.gender,
+          ...institutionReference,
+          password: security.password,
+          password_confirmation: security.passwordConfirmation,
+          metadata: {
+            job_title: identity.jobTitle,
+            institution_name: security.institutionName,
+          },
+        }),
+      });
+      const payload = await response.json().catch(() => null);
+
+      if (!response.ok) {
+        setFormError(payload?.detail ?? payload?.message ?? payload?.title ?? "Impossible de transmettre la demande.");
+        setSubmitting(false);
+        return;
+      }
+
+      setSubmitted(true);
+    } catch {
+      setFormError("Auth-service est momentanément indisponible.");
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -463,6 +507,15 @@ function StepAccountSecurity({
 
       <form onSubmit={onSubmit} className="mt-8 flex flex-col gap-5" noValidate>
         <TextField
+          label="UUID de l'établissement"
+          name="institutionUuid"
+          icon={<IdCard aria-hidden="true" />}
+          placeholder="00000000-0000-4000-8000-000000000000"
+          value={values.institutionUuid}
+          error={firstFormFieldError(errors, "institutionUuid")}
+          onChange={(value) => onChange("institutionUuid", value)}
+        />
+        <TextField
           label="Établissement"
           name="institutionName"
           icon={<Building2 aria-hidden="true" />}
@@ -520,7 +573,18 @@ function StepAccountSecurity({
           ) : null}
         </div>
 
-        <StepActions backLabel="Retour" submitLabel="Soumettre ma demande" onBack={onBack} />
+        {formError ? (
+          <p role="alert" className="rounded-2xl bg-destructive-soft px-4 py-3 text-sm font-medium text-destructive">
+            {formError}
+          </p>
+        ) : null}
+
+        <StepActions
+          backLabel="Retour"
+          submitLabel={submitting ? "Envoi en cours..." : "Soumettre ma demande"}
+          onBack={onBack}
+          disabled={submitting}
+        />
 
         <p className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
           <Clock className="size-4 shrink-0" aria-hidden="true" />
@@ -563,17 +627,23 @@ function StepActions({
   backLabel,
   submitLabel,
   onBack,
+  disabled = false,
 }: {
   backLabel: string;
   submitLabel: string;
   onBack: () => void;
+  disabled?: boolean;
 }) {
   return (
     <div className="mt-2 grid gap-4 sm:grid-cols-2">
-      <button type="button" onClick={onBack} className={secondaryButtonClassName}>
+      <button type="button" onClick={onBack} disabled={disabled} className={secondaryButtonClassName}>
         {backLabel}
       </button>
-      <button type="submit" className={primaryButtonClassName}>
+      <button
+        type="submit"
+        disabled={disabled}
+        className={cn(primaryButtonClassName, "disabled:cursor-not-allowed disabled:opacity-70")}
+      >
         {submitLabel}
       </button>
     </div>

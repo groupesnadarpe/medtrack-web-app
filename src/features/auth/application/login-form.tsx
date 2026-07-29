@@ -48,7 +48,7 @@ export function LoginForm() {
     setFormError(null);
   }
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     const validation = validateLogin(values);
@@ -63,10 +63,30 @@ export function LoginForm() {
     setFormError(null);
     setSubmitting(true);
 
-    // TODO(api) : appel à `/api/auth/login` volontairement neutralisé pendant la phase UI.
-    // La redirection définitive sera décidée côté serveur à partir des rôles renvoyés par l'API.
     const redirect = searchParams.get("redirect");
-    router.push(redirect ?? routes.home);
+    const endpoint = redirect ? `/api/auth/login?redirect=${encodeURIComponent(redirect)}` : "/api/auth/login";
+
+    try {
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: { Accept: "application/json", "Content-Type": "application/json" },
+        body: JSON.stringify(values),
+      });
+      const payload = await response.json().catch(() => null);
+
+      if (!response.ok) {
+        if (payload?.errors) setFieldErrors(payload.errors);
+        setFormError(payload?.detail ?? payload?.message ?? payload?.title ?? "Identifiants invalides.");
+        setSubmitting(false);
+        return;
+      }
+
+      router.replace(payload?.data?.redirect_to ?? routes.home);
+      router.refresh();
+    } catch {
+      setFormError("L'API Medtrack est momentanément indisponible.");
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -74,7 +94,7 @@ export function LoginForm() {
       <header className="flex flex-col gap-2">
         <h2 className="font-display text-3xl font-extrabold tracking-tight text-foreground">Connexion</h2>
         <p className="text-sm leading-relaxed text-muted-foreground text-pretty">
-          Accédez à votre espace de travail : vous êtes redirigé automatiquement selon votre rôle.
+          Accédez à votre espace de travail Medtrack.
         </p>
       </header>
 

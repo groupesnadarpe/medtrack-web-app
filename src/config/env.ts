@@ -1,5 +1,5 @@
 // Toute configuration exposée au navigateur doit être préfixée NEXT_PUBLIC_.
-// Les secrets, clés privées et signatures Gateway restent exclusivement côté Back-end/Kong.
+// Les secrets et signatures Gateway restent exclusivement côté serveur, Kong et services Laravel.
 export const env = {
   apiBaseUrl:
     process.env.MEDTRACK_API_BASE_URL ??
@@ -8,11 +8,9 @@ export const env = {
   appName: process.env.NEXT_PUBLIC_APP_NAME ?? "Medtrack",
   isProduction: process.env.NODE_ENV === "production",
 
-  // Phase UI : les écrans sont alimentés par des données mockées calquées sur l'OpenAPI.
-  // Passer NEXT_PUBLIC_USE_MOCKS=false rebranche automatiquement les gateways sur l'API réelle.
-  useMocks: (process.env.NEXT_PUBLIC_USE_MOCKS ?? "true") !== "false",
+  // Les mocks sont désormais opt-in : l'API réelle est utilisée par défaut.
+  useMocks: (process.env.NEXT_PUBLIC_USE_MOCKS ?? "false") === "true",
 
-  // Tant que le back-end n'est pas joignable, le middleware laisse passer les espaces acteurs.
-  // Passer NEXT_PUBLIC_ENFORCE_ROUTE_GUARD=true réactive la protection sans changer de code.
-  enforceRouteGuard: (process.env.NEXT_PUBLIC_ENFORCE_ROUTE_GUARD ?? "false") === "true",
+  // Les gardes sont actifs par défaut et ne peuvent être neutralisés que volontairement en local.
+  enforceRouteGuard: (process.env.NEXT_PUBLIC_ENFORCE_ROUTE_GUARD ?? "true") !== "false",
 };
