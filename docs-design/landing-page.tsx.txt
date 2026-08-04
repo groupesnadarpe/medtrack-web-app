@@ -1,0 +1,796 @@
+"use client";
+import type { NextPage } from "next";
+import { Box, Typography, Button } from "@mui/material";
+import Image from "next/image";
+
+const MedtrackLandingPage: NextPage = () => {
+  return (
+    <Box className="w-full relative bg-[#f8fafc] flex flex-col items-start min-h-[1024px] leading-[normal] tracking-[normal]">
+      <header className="self-stretch bg-[#fff] border-[#e2e8f0] border-solid border-b-[1px] flex items-center justify-between !pt-5 !pb-[18px] !pl-20 !pr-20 gap-5 top-[0] z-[99] sticky text-left text-lg text-[#1b2b4d] font-[Manrope] lg:gap-5 lg:!pl-10 lg:!pr-10 lg:box-border">
+        <Box className="flex items-center gap-3">
+          <Box className="h-8 w-8 relative rounded-md bg-[#00b4a6]" />
+          <Box className="flex flex-col items-start gap-0.5">
+            <div className="relative font-extrabold">
+              <Typography
+                variant="inherit"
+                variantMapping={{ inherit: "span" }}
+              >
+                MEDTRACK
+              </Typography>
+              <Typography
+                className="text-[#00b4a6]"
+                variant="inherit"
+                variantMapping={{ inherit: "span" }}
+              >
+                -RDC
+              </Typography>
+            </div>
+            <div className="relative text-[9px] font-extrabold text-[#00b4a6] mq1050:hidden">
+              MINISTÈRE DE LA SANTÉ PUBLIQUE
+            </div>
+          </Box>
+        </Box>
+        <nav className="!m-0 flex items-start gap-8 text-left text-sm text-[#1b2b4d] font-[Manrope] mq750:gap-4 mq450:hidden">
+          <div className="relative font-semibold">Présentation</div>
+          <div className="relative font-semibold">Chiffres</div>
+          <div className="relative font-semibold">Fonctionnement</div>
+          <div className="relative font-semibold">Portails</div>
+          <div className="relative font-semibold">Fonctionnalités</div>
+        </nav>
+        <Box className="flex items-center gap-4 mq750:hidden">
+          <Button
+            className="!pt-2.5 !pb-2.5 !pl-4 !pr-4"
+            disableElevation
+            variant="outlined"
+            sx={{
+              textTransform: "none",
+              color: "#00b4a6",
+              fontSize: "14",
+              borderColor: "#00b4a6",
+              borderRadius: "8px",
+              "&:hover": { borderColor: "#00b4a6" },
+            }}
+          >
+            Se connecter
+          </Button>
+          <Button
+            className="!pt-2.5 !pb-2.5 !pl-4 !pr-4"
+            disableElevation
+            variant="contained"
+            sx={{
+              textTransform: "none",
+              color: "#fff",
+              fontSize: "14",
+              background: "#00b4a6",
+              borderRadius: "8px",
+              "&:hover": { background: "#00b4a6" },
+            }}
+          >
+            Créer un espace
+          </Button>
+        </Box>
+      </header>
+      <section className="self-stretch bg-[#1b2b4d] flex items-center !p-20 box-border gap-12 max-w-full lg:flex-wrap mq750:gap-6 mq750:!pt-[52px] mq750:!pb-[52px] mq750:!pl-10 mq750:!pr-10 mq750:box-border">
+        <section className="flex-1 flex flex-col items-start gap-8 min-w-[437px] text-left text-[44px] text-[#fff] font-[Manrope] mq750:gap-4 mq750:min-w-full">
+          <Box className="self-stretch flex flex-col items-start gap-4">
+            <Typography
+              className="!m-0 self-stretch relative mq1050:text-[35px] mq1050:leading-[42px] mq450:text-[26px] mq450:leading-8"
+              variant="inherit"
+              variantMapping={{ inherit: "h1" }}
+              sx={{ fontWeight: "800", lineHeight: "120%" }}
+            >
+              La plateforme qui connecte étudiants, hôpitaux et universités pour
+              des stages médicaux réussis
+            </Typography>
+            <div className="self-stretch relative text-base leading-[160%]">
+              Pilotez le cycle de formation de vos cliniciens de demain.
+              MedTrack-RDC automatise, centralise et authentifie l’attribution
+              ainsi que l’évaluation des stages cliniques sur l'ensemble du
+              territoire national.
+            </div>
+          </Box>
+          <Box className="flex items-center gap-4 mq750:flex-wrap">
+            <Button
+              className="shadow-[0px_8px_16px_rgba(0,_180,_166,_0.2)] !pt-4 !pb-4 !pl-7 !pr-7"
+              endIcon={
+                <img width="16px" height="16px" src="/arrow-right.svg" />
+              }
+              variant="contained"
+              sx={{
+                textTransform: "none",
+                color: "#fff",
+                fontSize: "16",
+                background: "#00b4a6",
+                borderRadius: "12px",
+                "&:hover": { background: "#00b4a6" },
+              }}
+            >
+              Accéder à mon espace
+            </Button>
+            <Button
+              className="!pt-4 !pb-4 !pl-7 !pr-7"
+              disableElevation
+              variant="outlined"
+              sx={{
+                textTransform: "none",
+                color: "#fff",
+                fontSize: "16",
+                borderColor: "#fff",
+                borderRadius: "12px",
+                "&:hover": { borderColor: "#fff" },
+              }}
+            >
+              Découvrir la plateforme
+            </Button>
+          </Box>
+        </section>
+        <Image
+          className="h-[420px] w-[560px] object-cover max-w-full lg:flex-1"
+          loading="lazy"
+          width={560}
+          height={420}
+          sizes="100vw"
+          alt=""
+          src="/hero-right@2x.png"
+        />
+      </section>
+      <section className="self-stretch flex flex-col items-start !pt-12 !pb-12 !pl-20 !pr-20 text-left text-[32px] text-[#1b2b4d] font-[Manrope] mq750:!pl-10 mq750:!pr-10 mq750:box-border">
+        <Box className="self-stretch flex items-start justify-center flex-wrap content-start gap-6">
+          <Box className="flex-1 rounded-2xl bg-[#fff] border-[#e2e8f0] border-solid border-[1px] box-border flex items-center !pt-[22px] !pb-[22px] !pl-[23px] !pr-[23px] gap-4 min-w-[238px] max-w-[302px] mq450:flex-wrap">
+            <Box className="rounded-[10px] bg-[#e6f7f6] flex items-center justify-center !p-3">
+              <Image
+                className="h-6 w-full relative"
+                width={24}
+                height={24}
+                sizes="100vw"
+                alt=""
+                src="/users.svg"
+              />
+            </Box>
+            <Box className="flex-1 flex flex-col items-start gap-1 min-w-[123px]">
+              <Typography
+                className="!m-0 relative mq1050:text-[26px] mq450:text-[19px]"
+                variant="inherit"
+                variantMapping={{ inherit: "h2" }}
+                sx={{ fontWeight: "800" }}
+              >
+                2,400+
+              </Typography>
+              <div className="self-stretch relative text-sm font-semibold text-[#64748b]">
+                Étudiants actifs
+              </div>
+            </Box>
+          </Box>
+          <Box className="flex-1 rounded-2xl bg-[#fff] border-[#e2e8f0] border-solid border-[1px] box-border flex items-center !pt-[22px] !pb-[22px] !pl-[23px] !pr-[23px] gap-4 min-w-[238px] max-w-[302px] mq450:flex-wrap">
+            <Box className="rounded-[10px] bg-[#e6f7f6] flex items-center justify-center !p-3 box-border w-[px] h-[px]">
+              <Image
+                className="h-6 w-full relative"
+                width={24}
+                height={24}
+                sizes="100vw"
+                alt=""
+                src="/Vector.svg"
+              />
+            </Box>
+            <Box className="flex-1 flex flex-col items-start gap-1 min-w-[123px]">
+              <Typography
+                className="!m-0 relative mq1050:text-[26px] mq450:text-[19px]"
+                variant="inherit"
+                variantMapping={{ inherit: "h2" }}
+                sx={{ fontWeight: "800" }}
+              >
+                85
+              </Typography>
+              <div className="self-stretch relative text-sm font-semibold text-[#64748b]">
+                Hôpitaux partenaires
+              </div>
+            </Box>
+          </Box>
+          <Box className="flex-1 rounded-2xl bg-[#fff] border-[#e2e8f0] border-solid border-[1px] box-border flex items-center !pt-[22px] !pb-[22px] !pl-[23px] !pr-[23px] gap-4 min-w-[238px] max-w-[302px] mq450:flex-wrap">
+            <Box className="rounded-[10px] bg-[#e6f7f6] flex items-center justify-center !p-3">
+              <Image
+                className="h-6 w-full relative"
+                width={24}
+                height={24}
+                sizes="100vw"
+                alt=""
+                src="/graduation-cap.svg"
+              />
+            </Box>
+            <Box className="flex-1 flex flex-col items-start gap-1 min-w-[123px]">
+              <Typography
+                className="!m-0 relative mq1050:text-[26px] mq450:text-[19px]"
+                variant="inherit"
+                variantMapping={{ inherit: "h2" }}
+                sx={{ fontWeight: "800" }}
+              >
+                12
+              </Typography>
+              <div className="self-stretch relative text-sm font-semibold text-[#64748b]">
+                Universités connectées
+              </div>
+            </Box>
+          </Box>
+          <Box className="flex-1 rounded-2xl bg-[#fff] border-[#e2e8f0] border-solid border-[1px] box-border flex items-center !pt-[22px] !pb-[22px] !pl-[23px] !pr-[23px] gap-4 min-w-[238px] max-w-[302px] mq450:flex-wrap">
+            <Box className="rounded-[10px] bg-[#e6f7f6] flex items-center justify-center !p-3 box-border w-[px] h-[px]">
+              <Image
+                className="h-6 w-full relative"
+                width={24}
+                height={24}
+                sizes="100vw"
+                alt=""
+                src="/Vector1.svg"
+              />
+            </Box>
+            <Box className="flex-1 flex flex-col items-start gap-1 min-w-[123px]">
+              <Typography
+                className="!m-0 relative mq1050:text-[26px] mq450:text-[19px]"
+                variant="inherit"
+                variantMapping={{ inherit: "h2" }}
+                sx={{ fontWeight: "800" }}
+              >
+                96%
+              </Typography>
+              <div className="self-stretch relative text-sm font-semibold text-[#64748b]">
+                Taux de satisfaction
+              </div>
+            </Box>
+          </Box>
+        </Box>
+      </section>
+      <section className="self-stretch flex flex-col items-start !p-20 gap-12 text-center text-sm text-[#00b4a6] font-[Manrope] mq750:gap-6 mq750:!pt-[52px] mq750:!pb-[52px] mq750:!pl-10 mq750:!pr-10 mq750:box-border">
+        <Box className="self-stretch flex flex-col items-center gap-3">
+          <div className="relative uppercase font-extrabold text-left">
+            PROCESSUS SIMPLIFIÉ
+          </div>
+          <Typography
+            className="!m-0 self-stretch relative text-[#1b2b4d] mq1050:text-[26px] mq450:text-[19px]"
+            variant="inherit"
+            variantMapping={{ inherit: "h2" }}
+            sx={{ fontWeight: "800", fontSize: "32px" }}
+          >
+            Comment fonctionne MedTrack-RDC ?
+          </Typography>
+          <div className="w-[640px] relative text-base text-[#64748b] inline-block">
+            Une approche unifiée et fluide pour encadrer chaque étape clé, de
+            l'inscription au certificat final.
+          </div>
+        </Box>
+        <section className="self-stretch flex items-start flex-wrap content-start gap-6 text-left text-[40px] text-[#b2e6e2] font-[Manrope]">
+          <Box className="flex-1 rounded-2xl bg-[#fff] border-[#e2e8f0] border-solid border-[1px] box-border flex flex-col items-start !pt-[30px] !pb-[30px] !pl-[31px] !pr-[31px] gap-5 min-w-[308px]">
+            <Box className="self-stretch flex items-center justify-between gap-5 mq450:flex-wrap mq450:gap-5">
+              <Box className="rounded-[10px] bg-[#e6f7f6] flex items-center justify-center !p-3">
+                <Image
+                  className="h-6 w-full relative"
+                  width={24}
+                  height={24}
+                  sizes="100vw"
+                  alt=""
+                  src="/user-plus.svg"
+                />
+              </Box>
+              <Typography
+                className="!m-0 relative mq1050:text-[32px] mq450:text-2xl"
+                variant="inherit"
+                variantMapping={{ inherit: "h1" }}
+                sx={{ fontWeight: "800" }}
+              >
+                01
+              </Typography>
+            </Box>
+            <Box className="self-stretch flex flex-col items-start gap-3 text-lg text-[#1b2b4d]">
+              <Typography
+                className="self-stretch relative"
+                variant="inherit"
+                variantMapping={{ inherit: "b" }}
+                sx={{ fontWeight: "700" }}
+              >{`Inscription & Vérification`}</Typography>
+              <div className="self-stretch relative text-sm leading-[150%] text-[#64748b]">
+                L'étudiant, l'hôpital ou l'université crée son compte sécurisé.
+                Les profils sont immédiatement vérifiés auprès du Ministère pour
+                garantir la validité des acquis académiques.
+              </div>
+            </Box>
+          </Box>
+          <Box className="flex-1 rounded-2xl bg-[#fff] border-[#e2e8f0] border-solid border-[1px] box-border flex flex-col items-start !pt-[30px] !pb-[30px] !pl-[31px] !pr-[31px] gap-5 min-w-[308px]">
+            <Box className="self-stretch flex items-center justify-between gap-5 mq450:flex-wrap mq450:gap-5">
+              <Box className="rounded-[10px] bg-[#e6f7f6] flex items-center justify-center !p-3 box-border w-[px] h-[px]">
+                <Image
+                  className="h-6 w-full relative"
+                  width={24}
+                  height={24}
+                  sizes="100vw"
+                  alt=""
+                  src="/Vector2.svg"
+                />
+              </Box>
+              <Typography
+                className="!m-0 relative mq1050:text-[32px] mq450:text-2xl"
+                variant="inherit"
+                variantMapping={{ inherit: "h2" }}
+                sx={{ fontWeight: "800" }}
+              >
+                02
+              </Typography>
+            </Box>
+            <Box className="self-stretch flex flex-col items-start gap-3 text-lg text-[#1b2b4d]">
+              <Typography
+                className="self-stretch relative"
+                variant="inherit"
+                variantMapping={{ inherit: "b" }}
+                sx={{ fontWeight: "700" }}
+              >{`Matching & Attribution`}</Typography>
+              <div className="self-stretch relative text-sm leading-[150%] text-[#64748b]">
+                Grâce à notre algorithme intelligent, l'attribution des pools de
+                stages se fait instantanément d'après les capacités de réception
+                déclarées des hôpitaux et les maquettes pédagogiques.
+              </div>
+            </Box>
+          </Box>
+          <Box className="flex-1 rounded-2xl bg-[#fff] border-[#e2e8f0] border-solid border-[1px] box-border flex flex-col items-start !pt-[30px] !pb-[30px] !pl-[31px] !pr-[31px] gap-5 min-w-[308px]">
+            <Box className="self-stretch flex items-center justify-between gap-5 mq450:flex-wrap mq450:gap-5">
+              <Box className="rounded-[10px] bg-[#e6f7f6] flex items-center justify-center !p-3 box-border w-[px] h-[px]">
+                <Image
+                  className="h-6 w-full relative"
+                  width={24}
+                  height={24}
+                  sizes="100vw"
+                  alt=""
+                  src="/Vector3.svg"
+                />
+              </Box>
+              <Typography
+                className="!m-0 relative mq1050:text-[32px] mq450:text-2xl"
+                variant="inherit"
+                variantMapping={{ inherit: "h2" }}
+                sx={{ fontWeight: "800" }}
+              >
+                03
+              </Typography>
+            </Box>
+            <Box className="self-stretch flex flex-col items-start gap-3 text-lg text-[#1b2b4d]">
+              <Typography
+                className="self-stretch relative"
+                variant="inherit"
+                variantMapping={{ inherit: "b" }}
+                sx={{ fontWeight: "700" }}
+              >{`Suivi & Évaluation`}</Typography>
+              <div className="self-stretch relative text-sm leading-[150%] text-[#64748b]">
+                Le suivi de la présence s'effectue quotidiennement sur le
+                terrain. À la fin de chaque rotation, le maître de stage évalue
+                l'étudiant en ligne, déclenchant la validation de ses crédits.
+              </div>
+            </Box>
+          </Box>
+        </section>
+      </section>
+      <main className="self-stretch bg-[#fff] flex flex-col items-start !p-20 gap-12 text-center text-sm text-[#00b4a6] font-[Manrope] lg:!pt-[52px] lg:!pb-[52px] lg:box-border mq750:gap-6 mq750:!pt-[34px] mq750:!pb-[34px] mq750:!pl-10 mq750:!pr-10 mq750:box-border">
+        <Box className="self-stretch flex flex-col items-center gap-3">
+          <div className="relative uppercase font-extrabold text-left">
+            ACTEURS DE LA FORMATION
+          </div>
+          <Typography
+            className="!m-0 self-stretch relative text-[#1b2b4d] mq1050:text-[26px] mq450:text-[19px]"
+            variant="inherit"
+            variantMapping={{ inherit: "h2" }}
+            sx={{ fontWeight: "800", fontSize: "32px" }}
+          >
+            Tous les acteurs de la formation médicale, connectés sur une seule
+            plateforme
+          </Typography>
+          <div className="w-[640px] relative text-base text-[#64748b] inline-block">
+            MedTrack crée un pont entre les différents acteurs du parcours
+            clinique : étudiants, hôpitaux, maîtres de stage et universités,
+            pour fluidifier l'organisation, la supervision et l'évaluation.
+          </div>
+        </Box>
+        <Box className="self-stretch flex flex-col items-start gap-6">
+          <section className="self-stretch flex items-start flex-wrap content-start gap-6 text-left text-xl text-[#1b2b4d] font-[Manrope]">
+            <Box className="self-stretch flex-1 shadow-[0px_8px_16px_rgba(15,_23,_42,_0.04)] rounded-2xl bg-[#fff] border-[#e2e8f0] border-solid border-[1px] box-border flex flex-col items-start !pt-[30px] !pb-[30px] !pl-[31px] !pr-[31px] gap-6 min-w-[408px] mq750:min-w-full mq450:!pt-5 mq450:!pb-5 mq450:box-border">
+              <Image
+                className="self-stretch h-[220px] rounded-xl max-w-full overflow-hidden shrink-0 object-cover"
+                loading="lazy"
+                width={564}
+                height={220}
+                sizes="100vw"
+                alt=""
+                src="/actor-image@2x.png"
+              />
+              <Box className="self-stretch flex flex-col items-start gap-3">
+                <Typography
+                  className="!m-0 w-[500px] flex-1 relative inline-block mq450:text-base"
+                  variant="inherit"
+                  variantMapping={{ inherit: "h3" }}
+                  sx={{ fontWeight: "800" }}
+                >
+                  Étudiants en médecine
+                </Typography>
+                <div className="w-[540px] flex-1 relative text-sm leading-[150%] text-[#64748b] inline-block">
+                  Ils se préparent au terrain clinique, suivent leurs rotations
+                  et centralisent leurs évaluations et validations.
+                </div>
+              </Box>
+            </Box>
+            <Box className="self-stretch flex-1 shadow-[0px_8px_16px_rgba(15,_23,_42,_0.04)] rounded-2xl bg-[#fff] border-[#e2e8f0] border-solid border-[1px] box-border flex flex-col items-start !pt-[30px] !pb-[30px] !pl-[31px] !pr-[31px] gap-6 min-w-[408px] mq750:min-w-full mq450:!pt-5 mq450:!pb-5 mq450:box-border">
+              <Image
+                className="self-stretch h-[220px] rounded-xl max-w-full overflow-hidden shrink-0 object-cover"
+                width={564}
+                height={220}
+                sizes="100vw"
+                alt=""
+                src="/actor-image1@2x.png"
+              />
+              <Box className="self-stretch flex flex-col items-start gap-3">
+                <Typography
+                  className="!m-0 w-[500px] flex-1 relative inline-block mq450:text-base"
+                  variant="inherit"
+                  variantMapping={{ inherit: "h3" }}
+                  sx={{ fontWeight: "800" }}
+                >{`Hôpitaux & Cliniques`}</Typography>
+                <div className="w-[540px] flex-1 relative text-sm leading-[150%] text-[#64748b] inline-block">
+                  Ils accueillent, organisent les rotations et gèrent les
+                  arrivées, les plannings et les présences des stagiaires.
+                </div>
+              </Box>
+            </Box>
+          </section>
+          <section className="self-stretch flex items-start flex-wrap content-start gap-6 text-left text-xl text-[#1b2b4d] font-[Manrope]">
+            <Box className="self-stretch flex-1 shadow-[0px_8px_16px_rgba(15,_23,_42,_0.04)] rounded-2xl bg-[#fff] border-[#e2e8f0] border-solid border-[1px] box-border flex flex-col items-start !pt-[30px] !pb-[30px] !pl-[31px] !pr-[31px] gap-6 min-w-[408px] mq750:min-w-full mq450:!pt-5 mq450:!pb-5 mq450:box-border">
+              <Image
+                className="self-stretch h-[220px] rounded-xl max-w-full overflow-hidden shrink-0 object-cover"
+                width={564}
+                height={220}
+                sizes="100vw"
+                alt=""
+                src="/actor-image2@2x.png"
+              />
+              <Box className="self-stretch flex flex-col items-start gap-3">
+                <Typography
+                  className="!m-0 w-[500px] flex-1 relative inline-block mq450:text-base"
+                  variant="inherit"
+                  variantMapping={{ inherit: "h3" }}
+                  sx={{ fontWeight: "800" }}
+                >
+                  Maîtres de Stage
+                </Typography>
+                <div className="w-[540px] flex-1 relative text-sm leading-[150%] text-[#64748b] inline-block">
+                  Ils encadrent, évaluent et valident les compétences pratiques,
+                  et assurent un suivi quotidien sur le terrain.
+                </div>
+              </Box>
+            </Box>
+            <Box className="self-stretch flex-1 shadow-[0px_8px_16px_rgba(15,_23,_42,_0.04)] rounded-2xl bg-[#fff] border-[#e2e8f0] border-solid border-[1px] box-border flex flex-col items-start !pt-[30px] !pb-[30px] !pl-[31px] !pr-[31px] gap-6 min-w-[408px] mq750:min-w-full mq450:!pt-5 mq450:!pb-5 mq450:box-border">
+              <Image
+                className="self-stretch h-[220px] rounded-xl max-w-full overflow-hidden shrink-0 object-cover"
+                width={564}
+                height={220}
+                sizes="100vw"
+                alt=""
+                src="/actor-image3@2x.png"
+              />
+              <Box className="self-stretch flex flex-col items-start gap-3">
+                <Typography
+                  className="!m-0 w-[500px] flex-1 relative inline-block mq450:text-base"
+                  variant="inherit"
+                  variantMapping={{ inherit: "h3" }}
+                  sx={{ fontWeight: "800" }}
+                >{`Universités & Facultés`}</Typography>
+                <div className="w-[540px] flex-1 relative text-sm leading-[150%] text-[#64748b] inline-block">
+                  Elles pilotent les cohortes, gèrent les conventions et suivent
+                  les résultats, pour garantir une formation cohérente et
+                  réglementaire.
+                </div>
+              </Box>
+            </Box>
+          </section>
+        </Box>
+      </main>
+      <section className="self-stretch flex flex-col items-start !p-20 gap-12 text-center text-sm text-[#00b4a6] font-[Manrope] mq750:gap-6 mq750:!pt-[52px] mq750:!pb-[52px] mq750:!pl-10 mq750:!pr-10 mq750:box-border">
+        <Box className="self-stretch flex flex-col items-center gap-3">
+          <div className="relative uppercase font-extrabold text-left">
+            PUISSANCE TECHNIQUE
+          </div>
+          <Typography
+            className="!m-0 self-stretch relative text-[#1b2b4d] mq1050:text-[26px] mq450:text-[19px]"
+            variant="inherit"
+            variantMapping={{ inherit: "h2" }}
+            sx={{ fontWeight: "800", fontSize: "32px" }}
+          >
+            Des fonctionnalités pensées pour la santé publique
+          </Typography>
+          <div className="w-[640px] relative text-base text-[#64748b] inline-block">
+            Un socle moderne et résistant, conçu spécifiquement pour répondre
+            aux enjeux de la formation clinique.
+          </div>
+        </Box>
+        <section className="self-stretch flex flex-col items-start gap-6 text-left text-base text-[#1b2b4d] font-[Manrope]">
+          <Box className="self-stretch flex items-start flex-wrap content-start gap-6">
+            <Box className="flex-1 rounded-2xl bg-[#fff] border-[#e2e8f0] border-solid border-[1px] box-border flex items-start !pt-[22px] !pb-[22px] !pl-[23px] !pr-[23px] gap-5 min-w-[308px] mq450:flex-wrap">
+              <Box className="rounded-[10px] bg-[#e6f7f6] flex items-center justify-center !p-3 box-border w-[px] h-[px]">
+                <Image
+                  className="h-6 w-full relative"
+                  width={24}
+                  height={24}
+                  sizes="100vw"
+                  alt=""
+                  src="/Vector2.svg"
+                />
+              </Box>
+              <Box className="flex-1 flex flex-col items-start gap-2 min-w-[192px]">
+                <Typography
+                  className="self-stretch relative"
+                  variant="inherit"
+                  variantMapping={{ inherit: "b" }}
+                  sx={{ fontWeight: "700" }}
+                >
+                  Gestion des rotations
+                </Typography>
+                <div className="self-stretch relative text-sm leading-[140%] text-[#64748b]">
+                  Planifiez et visualisez l'enchaînement de vos cycles cliniques
+                  en quelques clics.
+                </div>
+              </Box>
+            </Box>
+            <Box className="flex-1 rounded-2xl bg-[#fff] border-[#e2e8f0] border-solid border-[1px] box-border flex items-start !pt-[22px] !pb-[22px] !pl-[23px] !pr-[23px] gap-5 min-w-[308px] mq450:flex-wrap">
+              <Box className="rounded-[10px] bg-[#e6f7f6] flex items-center justify-center !p-3 box-border w-[px] h-[px]">
+                <Image
+                  className="h-6 w-full relative"
+                  width={24}
+                  height={24}
+                  sizes="100vw"
+                  alt=""
+                  src="/Vector1.svg"
+                />
+              </Box>
+              <Box className="flex-1 flex flex-col items-start gap-2 min-w-[192px]">
+                <Typography
+                  className="self-stretch relative"
+                  variant="inherit"
+                  variantMapping={{ inherit: "b" }}
+                  sx={{ fontWeight: "700" }}
+                >
+                  Évaluations 360°
+                </Typography>
+                <div className="self-stretch relative text-sm leading-[140%] text-[#64748b]">
+                  Notation complète intégrée d'après le référentiel de
+                  compétences du Ministère.
+                </div>
+              </Box>
+            </Box>
+            <Box className="flex-1 rounded-2xl bg-[#fff] border-[#e2e8f0] border-solid border-[1px] box-border flex items-start !pt-[22px] !pb-[22px] !pl-[23px] !pr-[23px] gap-5 min-w-[308px] mq450:flex-wrap">
+              <Box className="rounded-[10px] bg-[#e6f7f6] flex items-center justify-center !p-3 box-border w-[px] h-[px]">
+                <Image
+                  className="h-6 w-full relative"
+                  width={24}
+                  height={24}
+                  sizes="100vw"
+                  alt=""
+                  src="/Feature-Icons-Row-Three.svg"
+                />
+              </Box>
+              <Box className="flex-1 flex flex-col items-start gap-2 min-w-[192px]">
+                <Typography
+                  className="self-stretch relative"
+                  variant="inherit"
+                  variantMapping={{ inherit: "b" }}
+                  sx={{ fontWeight: "700" }}
+                >
+                  Planning intelligent
+                </Typography>
+                <div className="self-stretch relative text-sm leading-[140%] text-[#64748b]">
+                  Évitez les surcharges de stagiaires dans vos services
+                  hospitaliers grâce aux quotas dynamiques.
+                </div>
+              </Box>
+            </Box>
+          </Box>
+          <Box className="self-stretch flex items-start flex-wrap content-start gap-6">
+            <Box className="flex-1 rounded-2xl bg-[#fff] border-[#e2e8f0] border-solid border-[1px] box-border flex items-start !pt-[22px] !pb-[22px] !pl-[23px] !pr-[23px] gap-5 min-w-[308px] mq450:flex-wrap">
+              <Box className="rounded-[10px] bg-[#e6f7f6] flex items-center justify-center !p-3">
+                <Image
+                  className="h-6 w-full relative"
+                  width={24}
+                  height={24}
+                  sizes="100vw"
+                  alt=""
+                  src="/trending-up.svg"
+                />
+              </Box>
+              <Box className="flex-1 flex flex-col items-start gap-2 min-w-[192px]">
+                <Typography
+                  className="self-stretch relative"
+                  variant="inherit"
+                  variantMapping={{ inherit: "b" }}
+                  sx={{ fontWeight: "700" }}
+                >{`Rapports & Analytics`}</Typography>
+                <div className="self-stretch relative text-sm leading-[140%] text-[#64748b]">
+                  Générez des rapports synthétiques sur l’assiduité, les notes
+                  moyennes et l’activité nationale.
+                </div>
+              </Box>
+            </Box>
+            <Box className="flex-1 rounded-2xl bg-[#fff] border-[#e2e8f0] border-solid border-[1px] box-border flex items-start !pt-[22px] !pb-[22px] !pl-[23px] !pr-[23px] gap-5 min-w-[308px] mq450:flex-wrap">
+              <Box className="rounded-[10px] bg-[#e6f7f6] flex items-center justify-center !p-3">
+                <Image
+                  className="h-6 w-full relative"
+                  width={24}
+                  height={24}
+                  sizes="100vw"
+                  alt=""
+                  src="/bell.svg"
+                />
+              </Box>
+              <Box className="flex-1 flex flex-col items-start gap-2 min-w-[192px]">
+                <Typography
+                  className="self-stretch relative"
+                  variant="inherit"
+                  variantMapping={{ inherit: "b" }}
+                  sx={{ fontWeight: "700" }}
+                >
+                  Notifications temps réel
+                </Typography>
+                <div className="self-stretch relative text-sm leading-[140%] text-[#64748b]">
+                  Restez alertés des validations, absences ou débuts de nouveaux
+                  cycles.
+                </div>
+              </Box>
+            </Box>
+            <Box className="flex-1 rounded-2xl bg-[#fff] border-[#e2e8f0] border-solid border-[1px] box-border flex items-start !pt-[22px] !pb-[22px] !pl-[23px] !pr-[23px] gap-5 min-w-[308px] mq450:flex-wrap">
+              <Box className="rounded-[10px] bg-[#e6f7f6] flex items-center justify-center !p-3">
+                <Image
+                  className="h-6 w-full relative"
+                  width={24}
+                  height={24}
+                  sizes="100vw"
+                  alt=""
+                  src="/award.svg"
+                />
+              </Box>
+              <Box className="flex-1 flex flex-col items-start gap-2 min-w-[192px]">
+                <Typography
+                  className="self-stretch relative"
+                  variant="inherit"
+                  variantMapping={{ inherit: "b" }}
+                  sx={{ fontWeight: "700" }}
+                >
+                  Certificats numériques
+                </Typography>
+                <div className="self-stretch relative text-sm leading-[140%] text-[#64748b]">
+                  Générez des certificats d'achèvement de stage signés
+                  électroniquement.
+                </div>
+              </Box>
+            </Box>
+          </Box>
+        </section>
+      </section>
+      <section className="self-stretch bg-[#fff] flex flex-col items-start !p-20 mq750:!pt-[52px] mq750:!pb-[52px] mq750:!pl-10 mq750:!pr-10 mq750:box-border">
+        <Box className="self-stretch rounded-3xl bg-[#1b2b4d] overflow-hidden flex items-center !p-12 gap-12 lg:flex-wrap lg:!pl-6 lg:!pr-6 lg:box-border mq750:gap-6 mq450:!pt-[31px] mq450:!pb-[31px] mq450:box-border">
+          <section className="flex-1 flex flex-col items-start gap-6 min-w-[530px] text-left text-xl text-[#fff] font-[Manrope] mq1050:min-w-full">
+            <Image
+              className="w-10 h-8 relative"
+              width={40}
+              height={32}
+              sizes="100vw"
+              alt=""
+              src="/quote.svg"
+            />
+            <div className="self-stretch relative leading-[160%] font-semibold mq450:text-base mq450:leading-[26px]">
+              "MedTrack-RDC a profondément modernisé le suivi de nos étudiants.
+              Fini les livrets de stages égarés et les retards de validation. En
+              connectant numériquement la Faculté de Médecine de Kinshasa aux
+              différents hôpitaux cliniques, nous garantissons l'intégrité de la
+              formation de nos futurs médecins."
+            </div>
+            <Box className="flex flex-col items-start gap-1 text-lg text-[#00b4a6]">
+              <div className="relative font-extrabold">
+                Prof. Robert Kalala M.
+              </div>
+              <div className="relative text-sm text-[#fff] opacity-[0.7]">
+                Doyen de la Faculté de Médecine de Kinshasa • Coordinateur
+                National de Formation
+              </div>
+            </Box>
+          </section>
+          <Image
+            className="h-80 w-80 rounded-2xl object-cover lg:flex-1"
+            loading="lazy"
+            width={320}
+            height={320}
+            sizes="100vw"
+            alt=""
+            src="/author-image-container@2x.png"
+          />
+        </Box>
+      </section>
+      <section className="self-stretch bg-[#0f172a] flex flex-col items-start !pt-20 !pb-10 !pl-20 !pr-20 box-border gap-16 max-w-full text-left text-[13px] text-[#fff] font-[Manrope] mq750:gap-8 mq750:!pl-10 mq750:!pr-10 mq750:box-border mq450:gap-4 mq450:!pt-[52px] mq450:!pb-[26px] mq450:box-border">
+        <section className="self-stretch flex items-start justify-between gap-5 max-w-full text-left text-lg text-[#fff] font-[Manrope] mq1050:flex-wrap mq1050:gap-5">
+          <Box className="w-[340px] flex flex-col items-start gap-4 max-w-full mq750:min-w-full mq1050:flex-1">
+            <Box className="flex items-center gap-3">
+              <Box className="h-8 w-8 relative rounded-md bg-[#00b4a6]" />
+              <div className="relative font-extrabold">
+                <Typography
+                  variant="inherit"
+                  variantMapping={{ inherit: "span" }}
+                >
+                  MEDTRACK
+                </Typography>
+                <Typography
+                  className="text-[#00b4a6]"
+                  variant="inherit"
+                  variantMapping={{ inherit: "span" }}
+                >
+                  -RDC
+                </Typography>
+              </div>
+            </Box>
+            <div className="self-stretch relative text-sm leading-[150%] opacity-[0.6]">
+              La plateforme gouvernementale de centralisation, d'évaluation et
+              de pilotage clinique des stages en santé publique en RDC.
+            </div>
+            <Typography
+              className="relative text-[#00b4a6]"
+              variant="inherit"
+              variantMapping={{ inherit: "b" }}
+              sx={{ fontSize: "12px", fontWeight: "700" }}
+            >
+              MINISTÈRE DE LA SANTÉ PUBLIQUE RDC
+            </Typography>
+          </Box>
+          <Box className="flex items-start gap-16 max-w-full text-sm mq750:min-w-full mq1050:flex-1 mq450:gap-8 mq450:flex-wrap">
+            <Box className="flex flex-col items-start gap-4 mq450:flex-1">
+              <div className="relative font-extrabold">PROFIL UTILISATEUR</div>
+              <div className="relative opacity-[0.6]">Espace Étudiant</div>
+              <div className="relative opacity-[0.6]">
+                Administration Hôpital
+              </div>
+              <div className="relative opacity-[0.6]">Maître de Stage</div>
+              <div className="relative opacity-[0.6]">Espace Universitaire</div>
+            </Box>
+            <Box className="flex flex-col items-start gap-4 mq450:flex-1">
+              <div className="relative font-extrabold">{`COMMUNAUTÉ & SUPPORT`}</div>
+              <div className="relative opacity-[0.6]">Centre d'aide</div>
+              <div className="relative opacity-[0.6]">Guides d'utilisation</div>
+              <div className="relative opacity-[0.6]">Contact</div>
+              <div className="relative opacity-[0.6]">Mentions Légales</div>
+            </Box>
+          </Box>
+        </section>
+        <Box className="self-stretch h-0 relative border-[#1b2b4d] border-solid border-t-[1px] box-border" />
+        <Box className="self-stretch flex items-center justify-between gap-5 max-w-full mq750:flex-wrap mq750:gap-5">
+          <div className="relative inline-block opacity-[0.4] max-w-full">
+            Copyright © 2024 MEDTRACK-RDC • Tous droits réservés.
+          </div>
+          <Box className="flex items-start gap-4">
+            <Image
+              className="h-5 w-5 relative"
+              width={20}
+              height={20}
+              sizes="100vw"
+              alt=""
+              src="/twitter.svg"
+            />
+            <Image
+              className="h-5 w-5 relative"
+              width={20}
+              height={20}
+              sizes="100vw"
+              alt=""
+              src="/linkedin.svg"
+            />
+            <Image
+              className="h-5 w-5 relative"
+              width={20}
+              height={20}
+              sizes="100vw"
+              alt=""
+              src="/facebook.svg"
+            />
+          </Box>
+        </Box>
+      </section>
+    </Box>
+  );
+};
+
+export default MedtrackLandingPage;

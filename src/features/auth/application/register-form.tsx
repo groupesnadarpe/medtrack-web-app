@@ -21,7 +21,6 @@ import {
   defaultAcademicYear,
   passwordRules,
   type StudentEligibilityValues,
-  universities,
 } from "@/features/auth/domain/registration";
 import { createFormValidator, firstFormFieldError, minLength, required } from "@/shared/forms";
 import type { FormFieldErrors } from "@/shared/forms";
@@ -231,21 +230,23 @@ function StepEligibility({
           <FieldError message={firstFormFieldError(errors, "matricule")} />
         </div>
 
-        <SelectField
-          label="Université"
-          name="university"
-          icon={<GraduationCap className="size-5" aria-hidden="true" />}
-          value={values.university}
-          error={firstFormFieldError(errors, "university")}
-          onChange={(value) => onChange("university", value)}
-        >
-          <option value="">Sélectionnez votre université</option>
-          {universities.map((university) => (
-            <option key={university.uuid} value={university.uuid}>
-              {university.name}
-            </option>
-          ))}
-        </SelectField>
+        <div className="flex flex-col gap-2">
+          <label className="text-sm font-semibold text-foreground">UUID de l&apos;université</label>
+          <div className="relative">
+            <GraduationCap className="pointer-events-none absolute top-1/2 left-4 size-5 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
+            <input
+              name="university"
+              type="text"
+              placeholder="00000000-0000-4000-8000-000000000000"
+              value={values.university}
+              onChange={(event) => onChange("university", event.target.value)}
+              aria-invalid={Boolean(firstFormFieldError(errors, "university"))}
+              className={cn(fieldClassName, "pr-4", firstFormFieldError(errors, "university") && "border-destructive focus:border-destructive")}
+            />
+          </div>
+          <FieldError message={firstFormFieldError(errors, "university")} />
+          <p className="text-xs leading-relaxed text-muted-foreground">Le catalogue public des universités vérifiées n&apos;est pas encore exposé par le Back-end.</p>
+        </div>
 
         <SelectField
           label="Année académique"
@@ -267,11 +268,10 @@ function StepEligibility({
         </button>
       </form>
 
-      <p className="mt-6 text-center">
-        <Link href={routes.login} className="text-base font-semibold text-primary-strong transition hover:underline">
-          Déjà un compte ? Se connecter
-        </Link>
-      </p>
+      <div className="mt-6 space-y-2 text-center">
+        <p><Link href={routes.login} className="text-base font-semibold text-primary-strong transition hover:underline">Déjà un compte ? Se connecter</Link></p>
+        <p className="text-sm text-muted-foreground">Vous représentez un établissement ?{" "}<Link href={routes.institutionOnboarding} className="font-semibold text-primary-strong hover:underline">Créer un espace institutionnel</Link></p>
+      </div>
     </>
   );
 }

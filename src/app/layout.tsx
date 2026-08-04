@@ -1,9 +1,19 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Plus_Jakarta_Sans } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 
-const _inter = Inter({ subsets: ["latin"] });
-const _plusJakartaSans = Plus_Jakarta_Sans({ subsets: ["latin"] });
+// La police est embarquée dans l'application : aucun appel à Google Fonts
+// n'est nécessaire pendant le build ou au démarrage du conteneur.
+const openSans = localFont({
+  src: [
+    { path: "../assets/fonts/OpenSans-Light.ttf", weight: "300", style: "normal" },
+    { path: "../assets/fonts/OpenSans-Regular.ttf", weight: "400", style: "normal" },
+    { path: "../assets/fonts/OpenSans-Bold.ttf", weight: "700", style: "normal" },
+  ],
+  variable: "--font-open-sans",
+  display: "swap",
+  fallback: ["Arial", "sans-serif"],
+});
 
 export const metadata: Metadata = {
   title: {
@@ -21,7 +31,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="fr" className="bg-background">
+    <html lang="fr" className={`${openSans.variable} bg-background`}>
       <body className="font-sans text-foreground antialiased">{children}</body>
     </html>
   );

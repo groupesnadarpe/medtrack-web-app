@@ -1,4 +1,5 @@
 import { apiRequest } from "@/core/api/http-client";
+import { actorsFromRoles } from "@/core/auth/role-access";
 import type { ApiEnvelope } from "@/shared/types/api";
 import type { LoginCredentials, LoginResult } from "@/features/auth/domain/auth-user";
 
@@ -93,6 +94,8 @@ async function mapAuthorizedUser(user: AuthUserApi, accessToken: string): Promis
 
 function mapAuthUser(user: AuthUserApi, roles: string[]): LoginResult["user"] {
   const fallbackName = [user.first_name, user.last_name].filter(Boolean).join(" ");
+  // Auth-service ne fournit pas encore actor_areas : les rôles validés restent la source canonique de repli.
+  const actorAreas = user.actor_areas?.length ? user.actor_areas : actorsFromRoles(roles);
 
   return {
     uuid: user.uuid ?? user.public_id ?? "",
@@ -100,6 +103,6 @@ function mapAuthUser(user: AuthUserApi, roles: string[]): LoginResult["user"] {
     email: user.email,
     phone: user.phone_number ?? user.phone,
     roles: Array.from(new Set(roles)),
-    actorAreas: user.actor_areas ?? [],
+    actorAreas,
   };
 }

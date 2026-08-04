@@ -12,4 +12,12 @@ fi
 # Le cache Next reste dans un volume Docker nommé afin d'éviter le filesystem Windows lent.
 mkdir -p /app/.next
 
+# Sur un bind mount Docker Desktop, le cache de développement Turbopack peut
+# conserver un manifeste incohérent et répondre 404 pour une route existante.
+# La cible est fixe : les dépendances et le cache npm ne sont jamais supprimés.
+if [ -d /app/.next/dev ]; then
+  echo "[medtrack-web] Réinitialisation du cache de routage Next..."
+  find /app/.next/dev -mindepth 1 -delete
+fi
+
 exec "$@"

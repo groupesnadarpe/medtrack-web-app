@@ -24,7 +24,7 @@ export function TestimonialSection() {
 
           <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl border-4 border-navy-foreground/90">
             <Image
-              src="/images/home/testimonial-dean.png"
+              src="/assets/images/med-doctor.png"
               alt="Portrait du Professeur Robert Kalala M., doyen de la Faculté de Médecine de Kinshasa"
               fill
               sizes="(min-width: 1024px) 33vw, 100vw"

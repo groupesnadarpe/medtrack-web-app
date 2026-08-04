@@ -1,0 +1,16 @@
+"use client";
+
+import { Check, Loader2, X } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { type FormEvent, useState } from "react";
+import type { AccountValidation } from "@/features/medtrack-institutions/domain/institution-management";
+import styles from "./institution-management.module.css";
+
+/** Approuve ou rejette une demande via le BFF sécurisé. Le motif de rejet est obligatoire. */
+export function ValidationActions({ validation, canReview }: Readonly<{ validation: AccountValidation; canReview: boolean }>) {
+  const router = useRouter(); const [busy, setBusy] = useState(false); const [rejecting, setRejecting] = useState(false); const [error, setError] = useState<string | null>(null);
+  async function mutate(action: "approve" | "reject", reason?: string) { setBusy(true); setError(null); const response = await fetch(`/api/auth/account-validations/${validation.uuid}/${action}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(action === "reject" ? { reason } : {}) }); if (!response.ok) { const body = await response.json().catch(() => ({})) as { detail?: string; title?: string; request_id?: string }; setError(`${body.detail ?? body.title ?? "Action impossible."}${body.request_id ? ` · request_id ${body.request_id}` : ""}`); } else { setRejecting(false); router.refresh(); } setBusy(false); }
+  function reject(event: FormEvent<HTMLFormElement>) { event.preventDefault(); const reason = new FormData(event.currentTarget).get("reason")?.toString().trim(); if (reason && reason.length >= 3) void mutate("reject", reason); else setError("Le motif doit contenir au moins 3 caractères."); }
+  if (validation.status !== "PENDING") return <span className={styles.reviewedLabel}>{validation.status === "APPROVED" ? "Traitée" : "Rejetée"}</span>;
+  return <><div className={styles.validationActions}><button type="button" className={styles.approveButton} onClick={() => void mutate("approve")} disabled={!canReview || busy}>{busy ? <Loader2 className={styles.spin} /> : <Check />}Approuver</button><button type="button" className={styles.rejectButton} onClick={() => setRejecting(true)} disabled={!canReview || busy}><X />Rejeter</button></div>{error ? <small className={styles.inlineError}>{error}</small> : null}{rejecting ? <div className={styles.modalBackdrop} role="presentation" onMouseDown={() => setRejecting(false)}><section className={styles.modalSmall} role="dialog" aria-modal="true" aria-labelledby="reject-title" onMouseDown={(event) => event.stopPropagation()}><h3 id="reject-title">Rejeter la demande</h3><p>Le demandeur pourra consulter ce motif.</p><form onSubmit={reject}><label>Motif<textarea name="reason" required minLength={3} maxLength={1000} rows={4} autoFocus /></label><div className={styles.modalFooter}><button type="button" className={styles.secondaryButton} onClick={() => setRejecting(false)}>Annuler</button><button type="submit" className={styles.rejectButton} disabled={busy}>Confirmer le rejet</button></div></form></section></div> : null}</>;
+}

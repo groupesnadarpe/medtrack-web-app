@@ -23,6 +23,7 @@ export type UiPermission =
   | "notification.read"
   | "institution.read"
   | "institution.manage"
+  | "users.read"
   | "staff.manage"
   | "reporting.read"
   | "support.manage"
@@ -58,12 +59,13 @@ const rolePermissions: Record<string, UiPermission[]> = {
     "notification.read",
     "institution.read",
     "institution.manage",
+    "users.read",
     "staff.manage",
     "reporting.read",
     "support.manage",
     "admin.accounts.validate",
   ],
-  MEDTRACK_ADMIN: ["institution.read", "institution.manage", "staff.manage", "reporting.read", "support.manage", "admin.accounts.validate"],
+  MEDTRACK_ADMIN: ["institution.read", "institution.manage", "users.read", "staff.manage", "reporting.read", "support.manage", "admin.accounts.validate"],
   UNIVERSITY_ADMIN: ["academic.students.read", "academic.students.create", "academic.students.import", "institution.read", "staff.manage", "media.upload", "media.extract", "reporting.read"],
   UNIVERSITY_AGENT: ["academic.students.read", "academic.students.create", "media.upload", "media.extract"],
   INTERNSHIP_COORDINATOR: ["academic.students.read", "admission.cases.read", "internship.read", "scheduling.read", "assessment.read", "reporting.read"],
@@ -82,7 +84,7 @@ const actorPermissions: Record<ActorKey, UiPermission[]> = {
   hospital: ["admission.cases.read", "admission.applications.manage", "internship.read", "internship.manage", "scheduling.read", "scheduling.manage", "attendance.read", "attendance.validate", "assessment.read", "assessment.evaluate", "payment.read", "staff.manage", "reporting.read", "notification.read"],
   "ordre-de-medecin": ["institution.read", "reporting.read", "media.read", "notification.read"],
   ministere: ["institution.read", "admission.cases.read", "internship.read", "assessment.read", "reporting.read", "notification.read"],
-  medtrack: ["institution.read", "institution.manage", "staff.manage", "support.manage", "admin.accounts.validate", "reporting.read", "notification.read"],
+  medtrack: ["institution.read", "institution.manage", "users.read", "staff.manage", "support.manage", "admin.accounts.validate", "reporting.read", "notification.read"],
 };
 
 function normalizeRole(role: string): string {

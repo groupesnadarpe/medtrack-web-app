@@ -1,10 +1,12 @@
-import Link from "next/link";
-import type { ActorArea } from "@/config/actors";
-import { LogoutButton } from "@/features/auth/application/logout-button";
-import type { AuthUser } from "@/features/auth/domain/auth-user";
-import { NotificationBell } from "@/features/notifications/ui/notification-bell";
-import { DashboardNavigation } from "@/shared/components/layout/dashboard-navigation";
+"use client";
 
+import { useState } from "react";
+import type { ActorArea } from "@/config/actors";
+import type { AuthUser } from "@/features/auth/domain/auth-user";
+import { DashboardHeader } from "@/shared/components/layout/dashboard-header";
+import { DashboardSidebar } from "@/shared/components/layout/dashboard-sidebar";
+
+/** Ossature responsive commune aux espaces protégés, sans remplacer les gardes serveur. */
 export function ProtectedShell({
   actor,
   user,
@@ -14,31 +16,15 @@ export function ProtectedShell({
   user?: AuthUser | null;
   children: React.ReactNode;
 }>) {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
   return (
-    <main className="min-h-screen bg-slate-50 text-slate-950">
-      <aside className="fixed inset-y-0 left-0 hidden w-72 border-r bg-white p-6 lg:block">
-        <Link href={actor.path} className="text-xl font-semibold">
-          Medtrack
-        </Link>
-        <p className="mt-2 text-sm text-slate-500">{actor.label}</p>
-        <DashboardNavigation actor={actor} user={user} />
-      </aside>
-      <section className="lg:pl-72">
-        <header className="border-b bg-white px-6 py-4">
-          <p className="text-sm text-slate-500">Espace protégé</p>
-          <div className="flex items-center justify-between gap-4">
-            <div>
-              <h1 className="text-xl font-semibold">{actor.label}</h1>
-              {user ? <p className="text-sm text-slate-500">{user.displayName}</p> : null}
-            </div>
-            <div className="flex items-center gap-3">
-              <NotificationBell />
-              <LogoutButton />
-            </div>
-          </div>
-        </header>
-        <div className="p-6">{children}</div>
-      </section>
-    </main>
+    <div className="min-h-screen bg-[#f7f9fb] text-foreground">
+      <DashboardSidebar actor={actor} user={user} mobileOpen={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)} />
+      <div className="min-h-screen lg:pl-[260px]">
+        <DashboardHeader actor={actor} user={user} onOpenMenu={() => setMobileMenuOpen(true)} />
+        <main className="mx-auto w-full max-w-[1664px] p-4 sm:p-6 lg:p-8">{children}</main>
+      </div>
+    </div>
   );
 }

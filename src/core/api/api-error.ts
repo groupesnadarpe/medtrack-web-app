@@ -4,6 +4,7 @@ export type ApiProblem = {
   status?: number;
   code?: string;
   detail?: string;
+  message?: string;
   request_id?: string | null;
   errors?: Record<string, string[]>;
 };

@@ -5,6 +5,9 @@ import type { NotificationItem } from "@/features/notifications/domain/notificat
 
 type ClientNotificationResponse = {
   data: NotificationItem[];
+  degraded?: boolean;
+  message?: string;
+  request_id?: string | null;
 };
 
 export function useNotifications() {
@@ -28,6 +31,11 @@ export function useNotifications() {
 
       const payload = (await response.json()) as ClientNotificationResponse;
       setNotifications(payload.data);
+
+      if (payload.degraded) {
+        const requestReference = payload.request_id ? ` Référence : ${payload.request_id}.` : "";
+        setError(`${payload.message ?? "Notifications indisponibles."}${requestReference}`);
+      }
     } catch (unknownError) {
       setError(unknownError instanceof Error ? unknownError.message : "Erreur inconnue.");
     } finally {

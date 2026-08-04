@@ -7,6 +7,7 @@ export type NavigationItem = {
   permission?: UiPermission;
 };
 
+// Chaque entrée reste alignée avec une permission Back-end ; l'UI ne remplace jamais le contrôle serveur.
 export const actorNavigation: Record<ActorKey, NavigationItem[]> = {
   student: [
     { label: "Tableau de bord", href: "/student" },
@@ -48,6 +49,7 @@ export const actorNavigation: Record<ActorKey, NavigationItem[]> = {
   ],
   medtrack: [
     { label: "Tableau de bord", href: "/medtrack" },
+    { label: "Gestion Utilisateurs", href: "/medtrack/users", permission: "users.read" },
     { label: "Validations", href: "/medtrack/account-validations", permission: "admin.accounts.validate" },
     { label: "Institutions", href: "/medtrack/institutions", permission: "institution.read" },
     { label: "Support", href: "/medtrack/support", permission: "support.manage" },

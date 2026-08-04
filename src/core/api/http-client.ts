@@ -93,7 +93,7 @@ export async function apiRequest<TResponse>(path: `/${string}`, options: ApiRequ
 
   if (!response.ok) {
     const problem = typeof payload === "object" && payload !== null ? (payload as ApiProblem) : undefined;
-    throw new ApiError(problem?.detail ?? problem?.title ?? "Erreur API Medtrack", response.status, problem);
+    throw new ApiError(problem?.detail ?? problem?.title ?? problem?.message ?? "Erreur API Medtrack", response.status, problem);
   }
 
   return payload as TResponse;

@@ -1,0 +1,13 @@
+export const institutionTypes = ["UNIVERSITY", "HOSPITAL", "HEALTH_CENTER", "CLINIC", "MINISTRY", "MEDICAL_ORDER", "MEDTRACK", "OTHER"] as const;
+export const institutionStatuses = ["PENDING", "ACTIVE", "SUSPENDED", "INACTIVE", "ARCHIVED"] as const;
+export const verificationStatuses = ["UNVERIFIED", "PENDING_VERIFICATION", "VERIFIED", "REJECTED"] as const;
+export type InstitutionType = (typeof institutionTypes)[number];
+export type InstitutionStatus = (typeof institutionStatuses)[number];
+export type VerificationStatus = (typeof verificationStatuses)[number];
+export type ManagedInstitution = { uuid: string; institution_type: InstitutionType; legal_name: string; display_name: string | null; official_code: string | null; registration_number: string | null; description: string | null; status: InstitutionStatus; verification_status: VerificationStatus; verified_at: string | null; verified_by_user_uuid: string | null; created_at: string | null; updated_at: string | null };
+export type InstitutionFilters = { page: number; perPage: number; search?: string; institutionType?: InstitutionType; status?: InstitutionStatus; verificationStatus?: VerificationStatus };
+export type InstitutionListMeta = { current_page: number; last_page: number; per_page: number; total: number };
+export type Availability = { kind: "ready" | "forbidden" | "unavailable"; message?: string; requestId?: string | null };
+export type ValidationStatus = "PENDING" | "APPROVED" | "REJECTED";
+export type ValidationUser = { uuid: string | null; fullname: string | null; email: string | null; phone_number: string | null; account_type: string; status: string };
+export type AccountValidation = { uuid: string; validation_source?: "legacy" | "institution_onboarding"; onboarding_request_uuid?: string | null; institution_name?: string | null; institution_type?: "hospital" | "university" | null; account_type: string; requested_role_code: string; scope_type: string; scope_uuid: string | null; status: ValidationStatus; user: ValidationUser; rejection_reason: string | null; reviewed_at: string | null; created_at: string | null };

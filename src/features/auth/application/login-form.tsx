@@ -41,6 +41,7 @@ export function LoginForm() {
 
   const loginError = firstFormFieldError(fieldErrors, "login");
   const passwordError = firstFormFieldError(fieldErrors, "password");
+  const registrationCompleted = searchParams.get("registered") === "1";
 
   function updateValue(field: keyof LoginValues, value: string) {
     setValues((current) => ({ ...current, [field]: value }));
@@ -92,11 +93,17 @@ export function LoginForm() {
   return (
     <div className="w-full max-w-md rounded-3xl border border-border/70 bg-card p-8 shadow-[0_24px_60px_-40px_rgba(22,38,74,0.35)] sm:p-10">
       <header className="flex flex-col gap-2">
-        <h2 className="font-display text-3xl font-extrabold tracking-tight text-foreground">Connexion</h2>
+        <h2 className="font-display text-2xl font-extrabold tracking-tight text-foreground">Connexion</h2>
         <p className="text-sm leading-relaxed text-muted-foreground text-pretty">
           Accédez à votre espace de travail Medtrack.
         </p>
       </header>
+
+      {registrationCompleted ? (
+        <p className="mt-6 rounded-2xl bg-success/10 px-4 py-3 text-sm font-semibold text-success">
+          Votre compte a été créé. Vous pouvez maintenant vous connecter.
+        </p>
+      ) : null}
 
       <form onSubmit={handleSubmit} className="mt-8 flex flex-col gap-5" noValidate>
         <div className="flex flex-col gap-2">
@@ -211,20 +218,27 @@ export function LoginForm() {
         <button
           type="submit"
           disabled={submitting}
-          className="mt-1 inline-flex h-14 w-full items-center justify-center gap-2 rounded-full bg-primary text-base font-semibold text-primary-foreground transition hover:bg-primary-strong focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70"
+          className="mt-1 inline-flex h-12 w-full items-center justify-center gap-2 rounded-full bg-primary text-base font-semibold text-primary-foreground transition hover:bg-primary-strong focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70"
         >
           {submitting ? <Loader2 className="size-5 animate-spin" aria-hidden="true" /> : null}
           {submitting ? "Connexion en cours..." : "Connexion à mon espace"}
         </button>
       </form>
 
-      <p className="mt-6 text-center text-sm text-muted-foreground">
-        Pas encore de compte ?{" "}
-        <Link href={routes.register} className="font-semibold text-primary-strong transition hover:underline">
-          Créer un espace
-        </Link>
-      </p>
-
+      <div className="mt-6 space-y-2 text-center text-sm text-muted-foreground">
+        <p>
+          Étudiant sans compte ?{" "}
+          <Link href={routes.register} className="font-semibold text-primary-strong transition hover:underline">
+            Créer un compte
+          </Link>
+        </p>
+        <p>
+          Vous représentez un établissement ?{" "}
+          <Link href={routes.institutionOnboarding} className="font-semibold text-primary-strong transition hover:underline">
+            Créer un espace institutionnel
+          </Link>
+        </p>
+      </div>
       {env.useMocks ? <DemoAccounts onSelect={(login, password) => setValues({ login, password })} /> : null}
     </div>
   );

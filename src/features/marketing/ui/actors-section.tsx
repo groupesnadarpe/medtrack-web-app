@@ -5,25 +5,25 @@ const actors = [
   {
     title: "Étudiants en médecine",
     description: "Ils se préparent au terrain clinique, suivent leurs rotations et centralisent leurs évaluations et validations.",
-    image: "/images/home/actor-students.png",
+    image: "/assets/images/med-student.png",
     alt: "Étudiante en médecine souriante tenant une tablette dans un couloir d'hôpital",
   },
   {
     title: "Hôpitaux & Cliniques",
     description: "Ils accueillent, organisent les rotations et gèrent les arrivées, les plannings et les présences des stagiaires.",
-    image: "/images/home/actor-hospitals.png",
+    image: "/assets/images/med-hospital.png",
     alt: "Bâtiment hospitalier moderne en verre avec bassin d'eau",
   },
   {
     title: "Maîtres de Stage",
     description: "Ils encadrent, évaluent et valident les compétences pratiques, et assurent un suivi quotidien sur le terrain.",
-    image: "/images/home/actor-supervisors.png",
+    image: "/assets/images/med-maitre-stage.png",
     alt: "Médecin senior en blouse blanche dans un service hospitalier",
   },
   {
     title: "Universités & Facultés",
     description: "Elles pilotent les cohortes, gèrent les conventions et suivent les résultats, pour garantir une formation cohérente et réglementaire.",
-    image: "/images/home/actor-universities.png",
+    image: "/assets/images/med-university.png",
     alt: "Campus universitaire de médecine avec bâtiment vitré et jardins",
   },
 ];

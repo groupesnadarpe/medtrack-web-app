@@ -6,8 +6,8 @@
   Toute couleur utilisée dans l'application doit passer par ces tokens.
 */
 @theme inline {
-  --font-sans: "Inter", "Inter Fallback", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Plus Jakarta Sans", "Plus Jakarta Sans Fallback", var(--font-sans);
+  --font-sans: var(--font-open-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-open-sans), ui-sans-serif, system-ui, sans-serif;
 
   --color-background: #ffffff;
   --color-foreground: #16264a;

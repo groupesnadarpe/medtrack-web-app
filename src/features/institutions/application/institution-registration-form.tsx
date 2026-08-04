@@ -7,7 +7,6 @@ import {
   Check,
   Clock,
   GraduationCap,
-  IdCard,
   Mail,
   Phone,
   ShieldCheck,
@@ -15,6 +14,7 @@ import {
   UsersRound,
 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { type FormEvent, type ReactNode, useId, useState } from "react";
 import { routes } from "@/core/routing/routes";
 import {
@@ -30,11 +30,18 @@ import {
 import { PasswordField, SelectField, TextField } from "@/shared/components/forms/form-fields";
 import { createFormValidator, email, firstFormFieldError, minLength, required } from "@/shared/forms";
 import type { FormFieldErrors } from "@/shared/forms";
+
+type OnboardingResponse = {
+  request_uuid: string;
+  claim_token: string;
+  claim_token_expires_at: string;
+  status: string;
+};
 import { cn } from "@/shared/ui/utils";
 
 type Step = 1 | 2 | 3;
 
-// Validation front-end « best effort » : l'API restera la source de vérité des règles métier.
+// Validation front-end « » : l'API restera la source de vérité.
 const validateIdentity = createFormValidator<AdminIdentityValues>([
   { field: "lastName", validate: required("Renseignez votre nom.") },
   { field: "postName", validate: required("Renseignez votre post-nom.") },
@@ -48,7 +55,6 @@ const validateIdentity = createFormValidator<AdminIdentityValues>([
 ]);
 
 const validateSecurity = createFormValidator<InstitutionSecurityValues>([
-  { field: "institutionUuid", validate: required("Renseignez l'UUID de l'établissement enregistré.") },
   { field: "institutionName", validate: required("Renseignez le nom de votre établissement.") },
   { field: "password", validate: required("Définissez un mot de passe.") },
   { field: "password", validate: minLength(8, "Le mot de passe contient au moins 8 caractères.") },
@@ -62,11 +68,12 @@ const secondaryButtonClassName =
   "inline-flex h-14 w-full items-center justify-center gap-2 rounded-full border border-primary bg-card text-base font-semibold text-primary-strong transition hover:bg-primary-soft focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-2";
 
 export function InstitutionRegistrationForm() {
+  const router = useRouter();
   const [step, setStep] = useState<Step>(1);
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [onboarding, setOnboarding] = useState<OnboardingResponse | null>(null);
   const [formError, setFormError] = useState<string | null>(null);
-
   const [typeValues, setTypeValues] = useState<InstitutionTypeValues>({ institutionType: "" });
   const [typeError, setTypeError] = useState<string | undefined>(undefined);
 
@@ -95,11 +102,13 @@ export function InstitutionRegistrationForm() {
 
     if (!typeValues.institutionType) {
       setTypeError("Sélectionnez le type d'établissement que vous représentez.");
-
       return;
     }
 
+    // L'étape 1 ne crée aucune ressource côté serveur : elle sert uniquement
+    // à mémoriser le choix de l'utilisateur avant de poursuivre le formulaire.
     setTypeError(undefined);
+    setFormError(null);
     setStep(2);
   }
 
@@ -110,7 +119,6 @@ export function InstitutionRegistrationForm() {
 
     if (!validation.isValid) {
       setIdentityErrors(validation.errors);
-
       return;
     }
 
@@ -134,7 +142,8 @@ export function InstitutionRegistrationForm() {
 
     if (Object.keys(errors).length > 0) {
       setSecurityErrors(errors);
-
+      // Affiche une erreur globale pour rendre le refus local immédiatement visible.
+      setFormError("Veuillez corriger les champs signalés avant de soumettre votre demande.");
       return;
     }
 
@@ -142,33 +151,82 @@ export function InstitutionRegistrationForm() {
     setFormError(null);
     setSubmitting(true);
 
-    const accountType = typeValues.institutionType === "HOSPITAL" ? "HOSPITAL_ADMIN" : "UNIVERSITY_ADMIN";
-    const institutionReference = typeValues.institutionType === "HOSPITAL"
-      ? { hospital_uuid: security.institutionUuid }
-      : { university_uuid: security.institutionUuid };
-
     try {
-      const response = await fetch("/api/auth/account-validations", {
+      let currentOnboarding = onboarding;
+
+      if (!currentOnboarding) {
+        // La demande est créée uniquement à la soumission finale, lorsque les
+        // trois étapes ont été entièrement renseignées et validées côté client.
+        const onboardingResponse = await fetch("/api/institution/onboarding-requests", {
+          method: "POST",
+          headers: { Accept: "application/json", "Content-Type": "application/json" },
+          body: JSON.stringify({
+            institution_name: security.institutionName,
+            institution_type: typeValues.institutionType.toLowerCase(),
+            admin_first_name: identity.firstName,
+            admin_middle_name: identity.postName || null,
+            admin_last_name: identity.lastName,
+            admin_email: identity.email,
+            admin_phone_number: identity.phone || null,
+            metadata: {
+              staff_identifier: identity.personalIdentifier || null,
+              job_title: identity.jobTitle || null,
+              ui_flow: "institution_registration_v2",
+            },
+          }),
+        });
+
+        const onboardingPayload = await onboardingResponse.json().catch(() => null);
+
+        if (!onboardingResponse.ok) {
+          setFormError(
+            onboardingPayload?.detail ??
+              onboardingPayload?.message ??
+              onboardingPayload?.title ??
+              "Impossible de créer la demande institutionnelle.",
+          );
+          return;
+        }
+
+        // Le proxy peut envelopper la réponse dans `data`. Cette compatibilité
+        // permet aussi de gérer temporairement la réponse directe du service.
+        currentOnboarding = onboardingPayload?.data ?? onboardingPayload;
+
+        if (!currentOnboarding?.request_uuid || !currentOnboarding?.claim_token) {
+          setFormError("La réponse du service institutionnel est incomplète.");
+          return;
+        }
+
+        // Le jeton est gardé pour éviter une demande en double si auth-service
+        // échoue et que l'utilisateur soumet à nouveau le formulaire.
+        setOnboarding(currentOnboarding);
+      }
+
+      const response = await fetch("/api/auth/institution-account-validations", {
         method: "POST",
         headers: { Accept: "application/json", "Content-Type": "application/json" },
         body: JSON.stringify({
-          account_type: accountType,
-          staff_identifier: identity.personalIdentifier,
-          email: identity.email,
-          phone_number: identity.phone,
-          last_name: identity.lastName,
-          middle_name: identity.postName,
-          first_name: identity.firstName,
-          gender: identity.gender,
-          ...institutionReference,
+          onboarding_request_uuid: currentOnboarding.request_uuid,
+          claim_token: currentOnboarding.claim_token,
+          institution_type: typeValues.institutionType.toLowerCase(),
+          institution_name: security.institutionName,
+          admin_first_name: identity.firstName,
+          admin_middle_name: identity.postName || null,
+          admin_last_name: identity.lastName,
+          admin_gender: identity.gender,
+          admin_email: identity.email,
+          admin_phone_number: identity.phone || null,
+          staff_identifier: identity.personalIdentifier || null,
+          job_title: identity.jobTitle || null,
           password: security.password,
           password_confirmation: security.passwordConfirmation,
           metadata: {
-            job_title: identity.jobTitle,
-            institution_name: security.institutionName,
+            institution_label: security.institutionName,
+            ui_flow: "institution_registration_v2",
           },
         }),
       });
+
       const payload = await response.json().catch(() => null);
 
       if (!response.ok) {
@@ -178,8 +236,18 @@ export function InstitutionRegistrationForm() {
       }
 
       setSubmitted(true);
+      window.sessionStorage.setItem(
+        "medtrack.pending-account-validation",
+        JSON.stringify({
+          ...(payload?.data ?? payload),
+          institution_name: security.institutionName,
+          email: identity.email,
+        }),
+      );
+      router.push(routes.accountPending);
     } catch {
-      setFormError("Auth-service est momentanément indisponible.");
+      setFormError("Le service d'inscription institutionnelle est momentanément indisponible.");
+    } finally {
       setSubmitting(false);
     }
   }
@@ -191,16 +259,20 @@ export function InstitutionRegistrationForm() {
       ) : (
         <>
           <span className="inline-flex rounded-full bg-primary-soft px-4 py-1.5 text-sm font-semibold text-primary-strong">
-            Étape {step}/3
+            Etape {step}/3
           </span>
 
           {step === 1 ? (
             <StepInstitutionType
               value={typeValues.institutionType}
               error={typeError}
+              formError={formError}
+              submitting={submitting}
               onSelect={(value) => {
                 setTypeValues({ institutionType: value });
                 setTypeError(undefined);
+                // Un changement de type invalide tout jeton déjà émis.
+                setOnboarding(null);
               }}
               onSubmit={handleTypeSubmit}
             />
@@ -213,6 +285,8 @@ export function InstitutionRegistrationForm() {
               onChange={(field, value) => {
                 setIdentity((current) => ({ ...current, [field]: value }));
                 setIdentityErrors((current) => ({ ...current, [field]: undefined }));
+                // Les informations signées doivent rester identiques entre les deux services.
+                setOnboarding(null);
               }}
               onBack={() => setStep(1)}
               onSubmit={handleIdentitySubmit}
@@ -221,12 +295,17 @@ export function InstitutionRegistrationForm() {
 
           {step === 3 ? (
             <StepAccountSecurity
-              institutionType={typeValues.institutionType}
               values={security}
               errors={securityErrors}
+              formError={formError}
+              submitting={submitting}
               onChange={(field, value) => {
                 setSecurity((current) => ({ ...current, [field]: value }));
                 setSecurityErrors((current) => ({ ...current, [field]: undefined }));
+                if (field === "institutionName") {
+                  // Le nom est inclus dans le jeton signé : toute modification exige un nouveau jeton.
+                  setOnboarding(null);
+                }
               }}
               onBack={() => setStep(2)}
               onSubmit={handleSecuritySubmit}
@@ -237,8 +316,6 @@ export function InstitutionRegistrationForm() {
     </div>
   );
 }
-
-/* --- En-tête commun aux étapes --- */
 
 function StepHeading({ title, description }: { title: string; description: string }) {
   return (
@@ -251,8 +328,6 @@ function StepHeading({ title, description }: { title: string; description: strin
   );
 }
 
-/* --- Étape 1 : type d'établissement --- */
-
 const institutionTypeIcons: Record<RequestableInstitutionType, ReactNode> = {
   HOSPITAL: <Activity className="size-6" aria-hidden="true" />,
   UNIVERSITY: <GraduationCap className="size-6" aria-hidden="true" />,
@@ -261,11 +336,15 @@ const institutionTypeIcons: Record<RequestableInstitutionType, ReactNode> = {
 function StepInstitutionType({
   value,
   error,
+  formError,
+  submitting,
   onSelect,
   onSubmit,
 }: {
   value: InstitutionTypeValues["institutionType"];
   error?: string;
+  formError: string | null;
+  submitting: boolean;
   onSelect: (value: RequestableInstitutionType) => void;
   onSubmit: (event: FormEvent<HTMLFormElement>) => void;
 }) {
@@ -340,21 +419,33 @@ function StepInstitutionType({
           ) : null}
         </fieldset>
 
-        <button type="submit" className={primaryButtonClassName}>
-          Suivant
+        {formError ? (
+          <p role="alert" className="rounded-2xl bg-destructive-soft px-4 py-3 text-sm font-medium text-destructive">
+            {formError}
+          </p>
+        ) : null}
+
+        <button type="submit" disabled={submitting} className={cn(primaryButtonClassName, "disabled:cursor-not-allowed disabled:opacity-70") }>
+          {submitting ? "Création de la demande..." : "Suivant"}
         </button>
       </form>
 
-      <p className="mt-6 text-center">
-        <Link href={routes.login} className="text-base font-semibold text-primary-strong transition hover:underline">
-          Déjà un compte ? Se connecter
-        </Link>
-      </p>
+      <div className="mt-6 space-y-2 text-center">
+        <p>
+          <Link href={routes.login} className="text-base font-semibold text-primary-strong transition hover:underline">
+            Déjà un compte ? Se connecter
+          </Link>
+        </p>
+        <p className="text-sm text-muted-foreground">
+          Vous êtes étudiant ?{" "}
+          <Link href={routes.register} className="font-semibold text-primary-strong hover:underline">
+            Créer un compte étudiant
+          </Link>
+        </p>
+      </div>
     </>
   );
 }
-
-/* --- Étape 2 : informations personnelles du futur administrateur --- */
 
 function StepAdminIdentity({
   values,
@@ -455,7 +546,7 @@ function StepAdminIdentity({
           <TextField
             label="Identifiant personnel"
             name="personalIdentifier"
-            icon={<IdCard aria-hidden="true" />}
+            icon={<BriefcaseBusiness aria-hidden="true" />}
             placeholder="HOSP-ADMIN-002"
             value={values.personalIdentifier}
             error={firstFormFieldError(errors, "personalIdentifier")}
@@ -479,19 +570,19 @@ function StepAdminIdentity({
   );
 }
 
-/* --- Étape 3 : établissement déclaré + sécurisation --- */
-
 function StepAccountSecurity({
-  institutionType,
   values,
   errors,
+  formError,
+  submitting,
   onChange,
   onBack,
   onSubmit,
 }: {
-  institutionType: InstitutionTypeValues["institutionType"];
   values: InstitutionSecurityValues;
   errors: FormFieldErrors<InstitutionSecurityValues>;
+  formError: string | null;
+  submitting: boolean;
   onChange: (field: keyof InstitutionSecurityValues, value: string | boolean) => void;
   onBack: () => void;
   onSubmit: (event: FormEvent<HTMLFormElement>) => void;
@@ -507,19 +598,10 @@ function StepAccountSecurity({
 
       <form onSubmit={onSubmit} className="mt-8 flex flex-col gap-5" noValidate>
         <TextField
-          label="UUID de l'établissement"
-          name="institutionUuid"
-          icon={<IdCard aria-hidden="true" />}
-          placeholder="00000000-0000-4000-8000-000000000000"
-          value={values.institutionUuid}
-          error={firstFormFieldError(errors, "institutionUuid")}
-          onChange={(value) => onChange("institutionUuid", value)}
-        />
-        <TextField
-          label="Établissement"
+          label="Nom de votre établissement"
           name="institutionName"
           icon={<Building2 aria-hidden="true" />}
-          placeholder={institutionNamePlaceholder(institutionType)}
+          placeholder="Nom officiel de votre établissement"
           autoComplete="organization"
           value={values.institutionName}
           error={firstFormFieldError(errors, "institutionName")}
@@ -563,7 +645,7 @@ function StepAccountSecurity({
             </span>
             <span className="text-pretty">
               J&apos;atteste que les informations fournies sont exactes et je m&apos;engage à respecter les conditions
-              d&apos;utilisation
+              d&apos;utilisation.
             </span>
           </button>
           {termsError ? (
@@ -595,8 +677,6 @@ function StepAccountSecurity({
   );
 }
 
-/* --- Confirmation de dépôt --- */
-
 function SubmissionSummary({ institutionName, email }: { institutionName: string; email: string }) {
   return (
     <div className="flex flex-col items-center gap-4 py-6 text-center">
@@ -620,8 +700,6 @@ function SubmissionSummary({ institutionName, email }: { institutionName: string
     </div>
   );
 }
-
-/* --- Actions bas de formulaire (Retour / Suivant) --- */
 
 function StepActions({
   backLabel,

@@ -6,7 +6,7 @@ export function AuthHeroPanel() {
   return (
     <aside className="relative flex flex-col justify-between overflow-hidden bg-navy px-8 py-10 text-navy-foreground lg:px-14 lg:py-14">
       {/* Décor : formes translucides reprenant l'identité visuelle du panneau. */}
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden max-lg:hidden">
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden max-lg:hidden remonte">
         <span className="absolute bottom-32 left-4 size-64 rounded-full bg-navy-soft/50" />
         <span className="absolute bottom-48 left-44 size-32 rounded-full bg-navy-soft/35" />
         <span className="absolute bottom-24 left-60 size-40 rounded-full bg-navy-soft/45" />
@@ -20,7 +20,7 @@ export function AuthHeroPanel() {
         <BrandMark tagline="Plateforme nationale" tone="light" />
 
         <div className="flex flex-col gap-6">
-          <h1 className="max-w-xl font-display text-4xl font-extrabold leading-tight text-balance lg:text-5xl">
+          <h1 className="max-w-xl font-display text-3xl font-extrabold leading-tight text-balance lg:text-4xl">
             Plateforme de gestion des stages médicaux
           </h1>
           <p className="max-w-lg text-base leading-relaxed text-slate-300 text-pretty">
